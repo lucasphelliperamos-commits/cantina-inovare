@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Colégio Inovare - Pedidos da Cantina
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="estilo.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+    <!-- ==========================================
+         CABEÇALHO
+         ========================================== -->
+
+    <header class="topo">
+
+        <div class="logo-area">
+
+            <!-- TROQUE SOMENTE O LINK DA LOGO -->
+
+            <img
+                src="LINK_DA_LOGO_AQUI"
+                alt="Logo do Colégio Inovare"
+                class="logo-imagem"
+            >
+
+            <div class="logo-texto">
+
+                <strong>
+                    COLÉGIO
+                </strong>
+
+                <h1>
+                    INOVARE
+                </h1>
+
+                <small>
+                    EDUCAÇÃO SÓLIDA PARA A VIDA TODA
+                </small>
+
+            </div>
+
+        </div>
+
+
+        <div class="informacoes">
+
+            <div class="informacao">
+
+                <strong>
+                    Sistema Positivo
+                </strong>
+
+                <small>
+                    Aprender é para a vida
+                </small>
+
+            </div>
+
+
+            <div class="divisoria"></div>
+
+
+            <div class="informacao">
+
+                <strong>
+                    Be
+                </strong>
+
+                <small>
+                    Currículo Bilíngue
+                </small>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- ==========================================
+         BANNER
+         ========================================== -->
+
+    <section class="banner">
+
+        <div class="banner-texto">
+
+            <h2>
+                Pedidos da
+                <span>Cantina</span>
+            </h2>
+
+            <p>
+                Faça seu pedido antecipado!
+            </p>
+
+        </div>
+
+
+        <div class="banner-imagem">
+
+            <!-- TROQUE SOMENTE O LINK DA FOTO DO BANNER -->
+
+            <img
+                src="LINK_DA_FOTO_DO_BANNER_AQUI"
+                alt="Alunos do Colégio Inovare"
+            >
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ==========================================
+         CONTEÚDO PRINCIPAL
+         ========================================== -->
+
+    <main>
+
+
+        <!-- ==========================================
+             ÁREA DO ALUNO
+             ========================================== -->
+
+        <section class="area-aluno">
+
+            <h2>
+                👥 Área do Aluno
+            </h2>
+
+            <p>
+                Preencha seus dados e faça seu pedido.
+            </p>
+
+
+
+            <!-- DADOS DO ALUNO -->
+
+            <div class="dados-aluno">
+
+
+                <div>
+
+                    <label for="nomeAluno">
+                        Nome do aluno
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nomeAluno"
+                        placeholder="Digite o nome"
+                    >
+
+                </div>
+
+
+
+                <div>
+
+                    <label for="turmaAluno">
+                        Turma
+                    </label>
+
+                    <input
+                        type="text"
+                        id="turmaAluno"
+                        placeholder="Digite a turma"
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <h3>
+                Escolha seus lanches
+            </h3>
+
+
+
+            <!-- ==========================================
+                 PRODUTOS
+                 ========================================== -->
+
+            <div class="produtos">
+
+
+                <!-- SALGADO -->
+
+                <div class="produto">
+
+                    <div class="produto-imagem">
+
+                        <!-- TROQUE SOMENTE O LINK -->
+
+                        <img
+                            src="LINK_DA_FOTO_DO_SALGADO_AQUI"
+                            alt="Salgado"
+                        >
+
+                    </div>
+
+
+                    <h3>
+                        🥪 Salgado
+                    </h3>
+
+                    <strong>
+                        R$ 6,00
+                    </strong>
+
+
+                    <input
+                        type="checkbox"
+                        name="lanche"
+                        value="Salgado"
+                        id="check-salgado"
+                    >
+
+
+                    <label
+                        for="check-salgado"
+                        class="selecionar"
+                    >
+                        Selecionar
+                    </label>
+
+
+                    <div class="quantidade">
+
+                        <button
+                            type="button"
+                            onclick="diminuir('salgado')"
+                        >
+                            −
+                        </button>
+
+
+                        <span id="qtd-salgado">
+                            0
+                        </span>
+
+
+                        <button
+                            type="button"
+                            onclick="aumentar('salgado')"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- SUCO -->
+
+                <div class="produto">
+
+                    <div class="produto-imagem">
+
+                        <!-- TROQUE SOMENTE O LINK -->
+
+                        <img
+                            src="LINK_DA_FOTO_DO_SUCO_AQUI"
+                            alt="Suco"
+                        >
+
+                    </div>
+
+
+                    <h3>
+                        🧃 Suco
+                    </h3>
+
+                    <strong>
+                        R$ 3,50
+                    </strong>
+
+
+                    <input
+                        type="checkbox"
+                        name="lanche"
+                        value="Suco"
+                        id="check-suco"
+                    >
+
+
+                    <label
+                        for="check-suco"
+                        class="selecionar"
+                    >
+                        Selecionar
+                    </label>
+
+
+                    <div class="quantidade">
+
+                        <button
+                            type="button"
+                            onclick="diminuir('suco')"
+                        >
+                            −
+                        </button>
+
+
+                        <span id="qtd-suco">
+                            0
+                        </span>
+
+
+                        <button
+                            type="button"
+                            onclick="aumentar('suco')"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- AÇAÍ -->
+
+                <div class="produto">
+
+                    <div class="produto-imagem">
+
+                        <!-- TROQUE SOMENTE O LINK -->
+
+                        <img
+                            src="LINK_DA_FOTO_DO_ACAI_AQUI"
+                            alt="Açaí"
+                        >
+
+                    </div>
+
+
+                    <h3>
+                        🍧 Açaí
+                    </h3>
+
+                    <strong>
+                        R$ 3,50
+                    </strong>
+
+
+                    <input
+                        type="checkbox"
+                        name="lanche"
+                        value="Açaí"
+                        id="check-acai"
+                    >
+
+
+                    <label
+                        for="check-acai"
+                        class="selecionar"
+                    >
+                        Selecionar
+                    </label>
+
+
+                    <div class="quantidade">
+
+                        <button
+                            type="button"
+                            onclick="diminuir('acai')"
+                        >
+                            −
+                        </button>
+
+
+                        <span id="qtd-acai">
+                            0
+                        </span>
+
+
+                        <button
+                            type="button"
+                            onclick="aumentar('acai')"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==========================================
+                 PAGAMENTO
+                 ========================================== -->
+
+            <div class="pagamento">
+
+                <h2>
+                    💳 Pagamento
+                </h2>
+
+
+                <div class="pix">
+
+                    <h3>
+                        PIX
+                    </h3>
+
+                    <p>
+                        Pagamento somente via Pix
+                    </p>
+
+
+                    <hr>
+
+
+                    <strong>
+                        Chave Pix
+                    </strong>
+
+                    <p>
+                        ac33d16b-aa57-4f63-8a76-a6f06c7992cd
+                    </p>
+
+
+                    <strong>
+                        Nome
+                    </strong>
+
+                    <p>
+                        Mathews Phillipy
+                    </p>
+
+
+                    <!-- ==================================
+                         PAGAMENTO DO PEDIDO
+                         ================================== -->
+
+                    <div
+                        id="pagamentoPedido"
+                        class="pagamento-pedido"
+                        style="display: none;"
+                    >
+
+                        <h3>
+                            💳 Pagamento do Pedido
+                        </h3>
+
+
+                        <!-- VALOR -->
+
+                        <div class="valor-pagamento">
+
+                            <span>
+                                Valor total:
+                            </span>
+
+                            <strong id="valorPagamento">
+                                R$ 0,00
+                            </strong>
+
+                        </div>
+
+
+
+                        <!-- CONTADOR -->
+
+                        <div class="tempo-pagamento">
+
+                            <span>
+                                ⏱️ Tempo para pagamento
+                            </span>
+
+                            <strong id="contadorPagamento">
+                                10:00
+                            </strong>
+
+                        </div>
+
+
+
+                        <!-- QR CODE -->
+
+                        <div class="qr-container">
+
+                            <p>
+                                📱 Escaneie o QR Code para pagar
+                            </p>
+
+
+                            <div id="qrCode">
+
+                                <span>
+                                    QR Code será gerado aqui
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- PIX COPIA E COLA -->
+
+                        <div class="pix-copia">
+
+                            <label for="pixCopiaCola">
+                                Pix Copia e Cola
+                            </label>
+
+
+                            <div class="pix-copia-linha">
+
+                                <input
+                                    type="text"
+                                    id="pixCopiaCola"
+                                    readonly
+                                    placeholder="Aguardando cobrança..."
+                                >
+
+
+                                <button
+                                    type="button"
+                                    onclick="copiarPix()"
+                                >
+                                    Copiar
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- STATUS -->
+
+                        <div
+                            id="statusPagamento"
+                            class="status-pagamento status-pendente"
+                        >
+                            🟡 Aguardando pagamento
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==========================================
+                 BOTÃO FAZER PEDIDO
+                 ========================================== -->
+
+            <button
+                type="button"
+                id="fazerPedido"
+                class="botao-pedido"
+            >
+                🛒 Fazer Pedido
+            </button>
+
+
+        </section>
+
+
+
+        <!-- ==========================================
+             ADMINISTRADOR
+             ========================================== -->
+
+        <section class="administrador">
+
+            <h2>
+                🔒 Área do Administrador
+            </h2>
+
+
+            <p>
+                Acesso exclusivo para administração dos pedidos.
+            </p>
+
+
+            <button
+                type="button"
+                onclick="abrirPainelAdmin()"
+            >
+                🔒 Entrar no Painel
+            </button>
+
+        </section>
+
+
+
+        <!-- ==========================================
+             PAINEL DO ADMINISTRADOR
+             ========================================== -->
+
+        <section
+            id="painelAdmin"
+            style="display: none;"
+        >
+
+
+            <h2>
+                📋 Painel do Administrador
+            </h2>
+
+
+
+            <!-- ESTATÍSTICAS -->
+
+            <div class="estatisticas">
+
+
+                <div class="estatistica">
+
+                    <span>
+                        Pedidos
+                    </span>
+
+                    <strong id="quantidadePedidos">
+                        0
+                    </strong>
+
+                </div>
+
+
+
+                <div class="estatistica">
+
+                    <span>
+                        Total arrecadado
+                    </span>
+
+                    <strong id="totalArrecadado">
+                        R$ 0,00
+                    </strong>
+
+                </div>
+
+
+
+                <div class="estatistica">
+
+                    <span>
+                        Pendentes
+                    </span>
+
+                    <strong id="pedidosPendentes">
+                        0
+                    </strong>
+
+                </div>
+
+
+
+                <div class="estatistica">
+
+                    <span>
+                        Pagos
+                    </span>
+
+                    <strong id="pedidosPagos">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- LISTA DE PEDIDOS -->
+
+            <h3>
+                Pedidos recebidos
+            </h3>
+
+
+            <div id="listaPedidos">
+
+                <p>
+                    Nenhum pedido realizado ainda.
+                </p>
+
+            </div>
+
+
+
+            <!-- SAIR -->
+
+            <button
+                type="button"
+                onclick="fecharPainelAdmin()"
+            >
+                Sair do painel
+            </button>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- ==========================================
+         RODAPÉ
+         ========================================== -->
+
+    <footer>
+
+        <p>
+            © 2026 Colégio Inovare
+        </p>
+
+    </footer>
+
+
+</div>
+
+
+
+<!-- JAVASCRIPT -->
+
+<script src="script.js"></script>
+
+
+</body>
+
+</html>
