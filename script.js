@@ -14,240 +14,111 @@ const PRECO_ACAI = 3.50;
 
 
 // ==========================================
-// CONFIGURAÇÃO DO PAGAMENTO
+// QUANTIDADES
 // ==========================================
 
-const TEMPO_PAGAMENTO = 10 * 60;
+function aumentar(produto) {
 
-const CHAVE_PIX =
-    "ac33d16b-aa57-4f63-8a76-a6f06c7992cd";
+    const campo = document.getElementById("qtd-" + produto);
+
+    if (!campo) {
+        console.error("Campo de quantidade não encontrado:", produto);
+        return;
+    }
+
+    let quantidade = Number(campo.textContent) || 0;
+
+    quantidade++;
+
+    campo.textContent = quantidade;
+
+    // Marca o produto automaticamente
+    const checkbox = document.getElementById("check-" + produto);
+
+    if (checkbox && quantidade > 0) {
+        checkbox.checked = true;
+    }
+}
+
+
+function diminuir(produto) {
+
+    const campo = document.getElementById("qtd-" + produto);
+
+    if (!campo) {
+        console.error("Campo de quantidade não encontrado:", produto);
+        return;
+    }
+
+    let quantidade = Number(campo.textContent) || 0;
+
+    if (quantidade > 0) {
+        quantidade--;
+    }
+
+    campo.textContent = quantidade;
+
+    // Se chegar a zero, desmarca
+    const checkbox = document.getElementById("check-" + produto);
+
+    if (checkbox && quantidade === 0) {
+        checkbox.checked = false;
+    }
+}
+
+
+// Disponibilizar para o HTML
+window.aumentar = aumentar;
+window.diminuir = diminuir;
 
 
 // ==========================================
-// VARIÁVEIS
-// ==========================================
-
-let contadorIntervalo = null;
-let tempoRestante = TEMPO_PAGAMENTO;
-
-
-// ==========================================
-// BANCO DE PEDIDOS
+// ARMAZENAMENTO DOS PEDIDOS
 // ==========================================
 
 function pegarPedidos() {
 
     try {
 
-        return JSON.parse(
-            localStorage.getItem("pedidos")
-        ) || [];
+        const dados = localStorage.getItem("pedidos");
+
+        if (!dados) {
+            return [];
+        }
+
+        return JSON.parse(dados);
 
     } catch (erro) {
 
-        console.error(
-            "Erro ao carregar pedidos:",
-            erro
-        );
+        console.error("Erro ao carregar pedidos:", erro);
 
         return [];
-
     }
-
 }
 
 
 function salvarPedidos(pedidos) {
 
-    localStorage.setItem(
-        "pedidos",
-        JSON.stringify(pedidos)
-    );
+    try {
 
-}
-
-
-// ==========================================
-// QUANTIDADE DOS PRODUTOS
-// ==========================================
-
-const quantidades = {
-
-    salgado: 0,
-    suco: 0,
-    acai: 0
-
-};
-
-
-function atualizarQuantidade(produto) {
-
-    const elemento =
-        document.getElementById(
-            "qtd-" + produto
+        localStorage.setItem(
+            "pedidos",
+            JSON.stringify(pedidos)
         );
 
-    if (elemento) {
+        return true;
 
-        elemento.textContent =
-            quantidades[produto];
+    } catch (erro) {
 
-    }
+        console.error("Erro ao salvar pedidos:", erro);
 
-}
-
-
-function aumentar(produto) {
-
-    if (
-        quantidades[produto] === undefined
-    ) {
-        return;
-    }
-
-    quantidades[produto]++;
-
-    atualizarQuantidade(produto);
-
-    atualizarCheckbox(produto);
-
-}
-
-
-function diminuir(produto) {
-
-    if (
-        quantidades[produto] === undefined
-    ) {
-        return;
-    }
-
-    if (quantidades[produto] > 0) {
-
-        quantidades[produto]--;
-
-    }
-
-    atualizarQuantidade(produto);
-
-    atualizarCheckbox(produto);
-
-}
-
-
-function atualizarCheckbox(produto) {
-
-    const checkbox =
-        document.getElementById(
-            "check-" + produto
+        alert(
+            "Não foi possível salvar o pedido neste navegador."
         );
 
-    if (!checkbox) {
-        return;
+        return false;
     }
-
-    checkbox.checked =
-        quantidades[produto] > 0;
-
 }
-
-
-// ==========================================
-// CHECKBOXES
-// ==========================================
-
-document.addEventListener(
-    "change",
-    function (evento) {
-
-        if (
-            !evento.target.matches(
-                'input[name="lanche"]'
-            )
-        ) {
-            return;
-        }
-
-        const produto =
-            evento.target.value;
-
-
-        if (produto === "Salgado") {
-
-            if (evento.target.checked) {
-
-                if (
-                    quantidades.salgado === 0
-                ) {
-
-                    quantidades.salgado = 1;
-
-                }
-
-            } else {
-
-                quantidades.salgado = 0;
-
-            }
-
-            atualizarQuantidade(
-                "salgado"
-            );
-
-        }
-
-
-        if (produto === "Suco") {
-
-            if (evento.target.checked) {
-
-                if (
-                    quantidades.suco === 0
-                ) {
-
-                    quantidades.suco = 1;
-
-                }
-
-            } else {
-
-                quantidades.suco = 0;
-
-            }
-
-            atualizarQuantidade(
-                "suco"
-            );
-
-        }
-
-
-        if (produto === "Açaí") {
-
-            if (evento.target.checked) {
-
-                if (
-                    quantidades.acai === 0
-                ) {
-
-                    quantidades.acai = 1;
-
-                }
-
-            } else {
-
-                quantidades.acai = 0;
-
-            }
-
-            atualizarQuantidade(
-                "acai"
-            );
-
-        }
-
-    }
-);
 
 
 // ==========================================
@@ -256,92 +127,125 @@ document.addEventListener(
 
 function calcularPedido() {
 
-    const itens = [];
-
     let total = 0;
 
+    const itens = [];
 
+
+    // ------------------------------------------
     // SALGADO
+    // ------------------------------------------
 
-    if (quantidades.salgado > 0) {
+    const checkSalgado =
+        document.getElementById("check-salgado");
 
-        const subtotal =
-            quantidades.salgado *
-            PRECO_SALGADO;
+    const qtdSalgado =
+        document.getElementById("qtd-salgado");
 
-        itens.push({
 
-            produto: "Salgado",
+    if (checkSalgado && qtdSalgado) {
 
-            quantidade:
-                quantidades.salgado,
+        const quantidade =
+            Number(qtdSalgado.textContent) || 0;
 
-            preco:
-                PRECO_SALGADO,
 
-            subtotal:
-                subtotal
+        if (checkSalgado.checked && quantidade > 0) {
 
-        });
+            const subtotal =
+                quantidade * PRECO_SALGADO;
 
-        total += subtotal;
+            total += subtotal;
 
+
+            itens.push({
+
+                produto: "Salgado",
+
+                quantidade: quantidade,
+
+                preco: PRECO_SALGADO,
+
+                subtotal: subtotal
+            });
+        }
     }
 
 
+    // ------------------------------------------
     // SUCO
+    // ------------------------------------------
 
-    if (quantidades.suco > 0) {
+    const checkSuco =
+        document.getElementById("check-suco");
 
-        const subtotal =
-            quantidades.suco *
-            PRECO_SUCO;
+    const qtdSuco =
+        document.getElementById("qtd-suco");
 
-        itens.push({
 
-            produto: "Suco",
+    if (checkSuco && qtdSuco) {
 
-            quantidade:
-                quantidades.suco,
+        const quantidade =
+            Number(qtdSuco.textContent) || 0;
 
-            preco:
-                PRECO_SUCO,
 
-            subtotal:
-                subtotal
+        if (checkSuco.checked && quantidade > 0) {
 
-        });
+            const subtotal =
+                quantidade * PRECO_SUCO;
 
-        total += subtotal;
+            total += subtotal;
 
+
+            itens.push({
+
+                produto: "Suco",
+
+                quantidade: quantidade,
+
+                preco: PRECO_SUCO,
+
+                subtotal: subtotal
+            });
+        }
     }
 
 
+    // ------------------------------------------
     // AÇAÍ
+    // ------------------------------------------
 
-    if (quantidades.acai > 0) {
+    const checkAcai =
+        document.getElementById("check-acai");
 
-        const subtotal =
-            quantidades.acai *
-            PRECO_ACAI;
+    const qtdAcai =
+        document.getElementById("qtd-acai");
 
-        itens.push({
 
-            produto: "Açaí",
+    if (checkAcai && qtdAcai) {
 
-            quantidade:
-                quantidades.acai,
+        const quantidade =
+            Number(qtdAcai.textContent) || 0;
 
-            preco:
-                PRECO_ACAI,
 
-            subtotal:
-                subtotal
+        if (checkAcai.checked && quantidade > 0) {
 
-        });
+            const subtotal =
+                quantidade * PRECO_ACAI;
 
-        total += subtotal;
+            total += subtotal;
 
+
+            itens.push({
+
+                produto: "Açaí",
+
+                quantidade: quantidade,
+
+                preco: PRECO_ACAI,
+
+                subtotal: subtotal
+            });
+        }
     }
 
 
@@ -350,9 +254,7 @@ function calcularPedido() {
         itens: itens,
 
         total: total
-
     };
-
 }
 
 
@@ -362,555 +264,253 @@ function calcularPedido() {
 
 function fazerPedido() {
 
-    const nomeInput =
-        document.getElementById(
-            "nomeAluno"
-        );
+    try {
+
+        const nomeInput =
+            document.getElementById("nomeAluno");
+
+        const turmaInput =
+            document.getElementById("turmaAluno");
 
 
-    const turmaInput =
-        document.getElementById(
-            "turmaAluno"
-        );
+        // ------------------------------------------
+        // VERIFICAR CAMPOS
+        // ------------------------------------------
+
+        if (!nomeInput || !turmaInput) {
+
+            alert(
+                "Erro: campos do aluno não encontrados."
+            );
+
+            console.error(
+                "Não encontrei nomeAluno ou turmaAluno."
+            );
+
+            return;
+        }
 
 
-    const nome =
-        nomeInput
-            ? nomeInput.value.trim()
-            : "";
+        const nome =
+            nomeInput.value.trim();
+
+        const turma =
+            turmaInput.value.trim();
 
 
-    const turma =
-        turmaInput
-            ? turmaInput.value.trim()
-            : "";
+        // ------------------------------------------
+        // NOME
+        // ------------------------------------------
+
+        if (!nome) {
+
+            alert(
+                "Digite o nome do aluno."
+            );
+
+            nomeInput.focus();
+
+            return;
+        }
 
 
-    if (!nome) {
+        // ------------------------------------------
+        // TURMA
+        // ------------------------------------------
+
+        if (!turma) {
+
+            alert(
+                "Digite a turma."
+            );
+
+            turmaInput.focus();
+
+            return;
+        }
+
+
+        // ------------------------------------------
+        // CALCULAR
+        // ------------------------------------------
+
+        const resultado =
+            calcularPedido();
+
+
+        // ------------------------------------------
+        // VERIFICAR PRODUTOS
+        // ------------------------------------------
+
+        if (
+            !resultado.itens ||
+            resultado.itens.length === 0
+        ) {
+
+            alert(
+                "Escolha pelo menos um lanche e informe a quantidade."
+            );
+
+            return;
+        }
+
+
+        // ------------------------------------------
+        // CRIAR PEDIDO
+        // ------------------------------------------
+
+        const pedido = {
+
+            id: Date.now(),
+
+            nome: nome,
+
+            turma: turma,
+
+            itens: resultado.itens,
+
+            total: resultado.total,
+
+            status: "Pendente",
+
+            pagamento: "Aguardando pagamento",
+
+            data:
+                new Date().toLocaleString("pt-BR")
+        };
+
+
+        // ------------------------------------------
+        // PEGAR PEDIDOS EXISTENTES
+        // ------------------------------------------
+
+        const pedidos =
+            pegarPedidos();
+
+
+        // ------------------------------------------
+        // ADICIONAR NOVO PEDIDO
+        // ------------------------------------------
+
+        pedidos.push(pedido);
+
+
+        // ------------------------------------------
+        // SALVAR
+        // ------------------------------------------
+
+        const salvo =
+            salvarPedidos(pedidos);
+
+
+        if (!salvo) {
+            return;
+        }
+
+
+        // ------------------------------------------
+        // CONFIRMAÇÃO
+        // ------------------------------------------
 
         alert(
-            "Digite o nome do aluno."
-        );
 
-        return;
+            "Pedido realizado com sucesso!\n\n" +
 
-    }
+            "Aluno: " +
+            nome +
 
+            "\nTurma: " +
+            turma +
 
-    if (!turma) {
+            "\nTotal: R$ " +
 
-        alert(
-            "Digite a turma."
-        );
-
-        return;
-
-    }
-
-
-    const resultado =
-        calcularPedido();
-
-
-    if (
-        resultado.itens.length === 0
-    ) {
-
-        alert(
-            "Escolha pelo menos um lanche."
-        );
-
-        return;
-
-    }
-
-
-    const pedido = {
-
-        id: Date.now(),
-
-        nome: nome,
-
-        turma: turma,
-
-        itens:
-            resultado.itens,
-
-        total:
-            resultado.total,
-
-        status:
-            "Pendente",
-
-        pagamento:
-            "Aguardando pagamento",
-
-        data:
-            new Date().toLocaleString(
-                "pt-BR"
-            )
-
-    };
-
-
-    const pedidos =
-        pegarPedidos();
-
-
-    pedidos.push(pedido);
-
-
-    salvarPedidos(
-        pedidos
-    );
-
-
-    mostrarPagamento(
-        resultado.total,
-        pedido.id
-    );
-
-
-    atualizarEstatisticas();
-
-
-    alert(
-        "Pedido realizado com sucesso!\n\n" +
-        "Aluno: " +
-        nome +
-        "\nTurma: " +
-        turma +
-        "\nTotal: R$ " +
-        resultado.total
-            .toFixed(2)
-            .replace(".", ",") +
-        "\n\nAgora faça o pagamento via Pix."
-    );
-
-}
-
-
-// ==========================================
-// MOSTRAR PAGAMENTO
-// ==========================================
-
-function mostrarPagamento(
-    total,
-    idPedido
-) {
-
-    const area =
-        document.getElementById(
-            "pagamentoPedido"
-        );
-
-
-    const valor =
-        document.getElementById(
-            "valorPagamento"
-        );
-
-
-    const pix =
-        document.getElementById(
-            "pixCopiaCola"
-        );
-
-
-    if (!area) {
-        return;
-    }
-
-
-    area.style.display =
-        "block";
-
-
-    if (valor) {
-
-        valor.textContent =
-            "R$ " +
-            total
+            resultado.total
                 .toFixed(2)
-                .replace(".", ",");
-
-    }
-
-
-    const codigoPix =
-        CHAVE_PIX +
-        " | PEDIDO-" +
-        idPedido +
-        " | VALOR-" +
-        total.toFixed(2);
-
-
-    if (pix) {
-
-        pix.value =
-            codigoPix;
-
-    }
-
-
-    gerarQRCode(
-        codigoPix
-    );
-
-
-    iniciarContador(
-        idPedido
-    );
-
-
-    area.scrollIntoView({
-
-        behavior: "smooth",
-
-        block: "center"
-
-    });
-
-}
-
-
-// ==========================================
-// QR CODE
-// ==========================================
-
-function gerarQRCode(texto) {
-
-    const qr =
-        document.getElementById(
-            "qrCode"
+                .replace(".", ",")
         );
 
 
-    if (!qr) {
-        return;
+        // ------------------------------------------
+        // LIMPAR CAMPOS
+        // ------------------------------------------
+
+        nomeInput.value = "";
+
+        turmaInput.value = "";
+
+
+        // ------------------------------------------
+        // DESMARCAR PRODUTOS
+        // ------------------------------------------
+
+        document
+            .querySelectorAll(
+                'input[name="lanche"]'
+            )
+            .forEach(
+                function (checkbox) {
+
+                    checkbox.checked = false;
+                }
+            );
+
+
+        // ------------------------------------------
+        // ZERAR QUANTIDADES
+        // ------------------------------------------
+
+        zerarQuantidade("salgado");
+
+        zerarQuantidade("suco");
+
+        zerarQuantidade("acai");
+
+
+        // ------------------------------------------
+        // ATUALIZAR ESTATÍSTICAS
+        // ------------------------------------------
+
+        atualizarEstatisticas();
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao fazer pedido:",
+            erro
+        );
+
+        alert(
+            "Ocorreu um erro ao fazer o pedido. Veja o console para mais detalhes."
+        );
     }
-
-
-    const url =
-        "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" +
-        encodeURIComponent(texto);
-
-
-    qr.innerHTML = `
-
-        <img
-            src="${url}"
-            alt="QR Code Pix"
-        >
-
-    `;
-
 }
 
 
+// Disponibilizar para o botão HTML
+window.fazerPedido = fazerPedido;
+
+
 // ==========================================
-// COPIAR PIX
+// ZERAR QUANTIDADE
 // ==========================================
 
-function copiarPix() {
+function zerarQuantidade(produto) {
 
     const campo =
         document.getElementById(
-            "pixCopiaCola"
+            "qtd-" + produto
         );
 
+    if (campo) {
 
-    if (!campo) {
-        return;
+        campo.textContent = "0";
     }
-
-
-    if (!campo.value) {
-
-        alert(
-            "Nenhum código Pix disponível."
-        );
-
-        return;
-
-    }
-
-
-    if (
-        navigator.clipboard &&
-        navigator.clipboard.writeText
-    ) {
-
-        navigator.clipboard
-            .writeText(campo.value)
-            .then(function () {
-
-                alert(
-                    "Código Pix copiado!"
-                );
-
-            })
-            .catch(function () {
-
-                campo.select();
-
-                document.execCommand(
-                    "copy"
-                );
-
-                alert(
-                    "Código Pix copiado!"
-                );
-
-            });
-
-    } else {
-
-        campo.select();
-
-        document.execCommand(
-            "copy"
-        );
-
-        alert(
-            "Código Pix copiado!"
-        );
-
-    }
-
 }
 
 
 // ==========================================
-// CONTADOR DE PAGAMENTO
-// ==========================================
-
-function iniciarContador(
-    idPedido
-) {
-
-    if (contadorIntervalo) {
-
-        clearInterval(
-            contadorIntervalo
-        );
-
-    }
-
-
-    tempoRestante =
-        TEMPO_PAGAMENTO;
-
-
-    atualizarContador();
-
-
-    contadorIntervalo =
-        setInterval(
-            function () {
-
-                tempoRestante--;
-
-                atualizarContador();
-
-
-                if (
-                    tempoRestante <= 0
-                ) {
-
-                    clearInterval(
-                        contadorIntervalo
-                    );
-
-                    contadorIntervalo =
-                        null;
-
-                    pagamentoExpirado(
-                        idPedido
-                    );
-
-                }
-
-            },
-            1000
-        );
-
-}
-
-
-// ==========================================
-// ATUALIZAR CONTADOR
-// ==========================================
-
-function atualizarContador() {
-
-    const contador =
-        document.getElementById(
-            "contadorPagamento"
-        );
-
-
-    if (!contador) {
-        return;
-    }
-
-
-    const minutos =
-        Math.floor(
-            tempoRestante / 60
-        );
-
-
-    const segundos =
-        tempoRestante % 60;
-
-
-    contador.textContent =
-        String(minutos)
-            .padStart(2, "0") +
-        ":" +
-        String(segundos)
-            .padStart(2, "0");
-
-}
-
-
-// ==========================================
-// PAGAMENTO EXPIRADO
-// ==========================================
-
-function pagamentoExpirado(
-    idPedido
-) {
-
-    const status =
-        document.getElementById(
-            "statusPagamento"
-        );
-
-
-    if (status) {
-
-        status.className =
-            "status-pagamento status-expirado";
-
-        status.textContent =
-            "🔴 Tempo para pagamento encerrado";
-
-    }
-
-
-    const pedidos =
-        pegarPedidos();
-
-
-    const pedido =
-        pedidos.find(
-            function (item) {
-
-                return item.id === idPedido;
-
-            }
-        );
-
-
-    if (pedido) {
-
-        pedido.status =
-            "Pendente";
-
-        pedido.pagamento =
-            "Pagamento expirado";
-
-
-        salvarPedidos(
-            pedidos
-        );
-
-    }
-
-
-    atualizarEstatisticas();
-
-}
-
-
-// ==========================================
-// ADMINISTRADOR
-// ==========================================
-
-function abrirPainelAdmin() {
-
-    const senha =
-        prompt(
-            "Digite a senha do administrador:"
-        );
-
-
-    if (
-        senha !== "1234"
-    ) {
-
-        alert(
-            "Senha incorreta."
-        );
-
-        return;
-
-    }
-
-
-    const painel =
-        document.getElementById(
-            "painelAdmin"
-        );
-
-
-    if (!painel) {
-        return;
-    }
-
-
-    painel.style.display =
-        "block";
-
-
-    mostrarPedidosAdmin();
-
-
-    painel.scrollIntoView({
-
-        behavior: "smooth"
-
-    });
-
-}
-
-
-// ==========================================
-// FECHAR ADMIN
-// ==========================================
-
-function fecharPainelAdmin() {
-
-    const painel =
-        document.getElementById(
-            "painelAdmin"
-        );
-
-
-    if (painel) {
-
-        painel.style.display =
-            "none";
-
-    }
-
-}
-
-
-// ==========================================
-// MOSTRAR PEDIDOS NO ADMIN
+// MOSTRAR PEDIDOS NO ADMINISTRADOR
 // ==========================================
 
 function mostrarPedidosAdmin() {
@@ -922,6 +522,11 @@ function mostrarPedidosAdmin() {
 
 
     if (!lista) {
+
+        console.error(
+            "Elemento listaPedidos não encontrado."
+        );
+
         return;
     }
 
@@ -930,221 +535,205 @@ function mostrarPedidosAdmin() {
         pegarPedidos();
 
 
-    if (
-        pedidos.length === 0
-    ) {
+    // ------------------------------------------
+    // NENHUM PEDIDO
+    // ------------------------------------------
 
-        lista.innerHTML = `
+    if (pedidos.length === 0) {
 
-            <p>
-                Nenhum pedido realizado ainda.
-            </p>
-
-        `;
-
+        lista.innerHTML =
+            "<p>Nenhum pedido realizado ainda.</p>";
 
         atualizarEstatisticas();
 
         return;
-
     }
 
 
     lista.innerHTML = "";
 
 
-    pedidos.forEach(
-        function (pedido) {
+    // ------------------------------------------
+    // MOSTRAR PEDIDOS
+    // ------------------------------------------
 
-            const card =
-                document.createElement(
-                    "div"
-                );
+    pedidos
+        .slice()
+        .reverse()
+        .forEach(
+            function (pedido) {
+
+                const card =
+                    document.createElement(
+                        "div"
+                    );
 
 
-            card.className =
-                "pedido-admin";
+                card.className =
+                    "pedido-admin";
 
 
-            let itensHTML =
-                "";
+                let itensHTML = "";
 
 
-            if (
-                pedido.itens &&
-                Array.isArray(pedido.itens)
-            ) {
+                // ------------------------------------------
+                // ITENS
+                // ------------------------------------------
 
-                pedido.itens.forEach(
-                    function (item) {
+                if (
+                    pedido.itens &&
+                    pedido.itens.length > 0
+                ) {
 
-                        itensHTML += `
+                    pedido.itens.forEach(
+                        function (item) {
 
-                            <div>
-                                ${item.quantidade}x
-                                ${item.produto}
-                                —
-                                R$
-                                ${Number(
-                                    item.subtotal
-                                )
-                                    .toFixed(2)
-                                    .replace(".", ",")}
-                            </div>
+                            itensHTML += `
 
-                        `;
+                                <div>
+                                    ${item.quantidade}x
+                                    ${item.produto}
+                                    —
+                                    R$ ${Number(item.subtotal)
+                                        .toFixed(2)
+                                        .replace(".", ",")}
+                                </div>
 
+                            `;
+                        }
+                    );
+
+                }
+
+
+                // ------------------------------------------
+                // STATUS
+                // ------------------------------------------
+
+                const statusClasse =
+                    pedido.status === "Pago"
+                        ? "status-pago"
+                        : "status-pendente";
+
+
+                // ------------------------------------------
+                // PAGAMENTO
+                // ------------------------------------------
+
+                const pagamento =
+                    pedido.pagamento ||
+                    (
+                        pedido.status === "Pago"
+                            ? "Pagamento confirmado pelo administrador"
+                            : "Aguardando pagamento"
+                    );
+
+
+                // ------------------------------------------
+                // CARD
+                // ------------------------------------------
+
+                card.innerHTML = `
+
+                    <h3>
+                        Pedido de ${pedido.nome}
+                    </h3>
+
+                    <p>
+                        <strong>Turma:</strong>
+                        ${pedido.turma}
+                    </p>
+
+                    <p>
+                        <strong>Data:</strong>
+                        ${pedido.data}
+                    </p>
+
+                    <p>
+                        <strong>Itens:</strong>
+                    </p>
+
+                    <div>
+                        ${itensHTML}
+                    </div>
+
+                    <p>
+                        <strong>Total:</strong>
+                        R$
+                        ${Number(pedido.total)
+                            .toFixed(2)
+                            .replace(".", ",")}
+                    </p>
+
+                    <p>
+                        <strong>Pagamento:</strong>
+                        ${pagamento}
+                    </p>
+
+                    <p>
+                        <strong>Status:</strong>
+
+                        <span class="${statusClasse}">
+                            ${pedido.status}
+                        </span>
+                    </p>
+
+
+                    ${
+                        pedido.status !== "Pago"
+
+                        ?
+
+                        `
+                        <button
+                            type="button"
+                            onclick="marcarPago(${pedido.id})"
+                        >
+                            🟢 Marcar como pago
+                        </button>
+                        `
+
+                        :
+
+                        `
+                        <button
+                            type="button"
+                            disabled
+                        >
+                            ✅ Pagamento confirmado
+                        </button>
+                        `
                     }
-                );
+
+
+                    <button
+                        type="button"
+                        onclick="excluirPedido(${pedido.id})"
+                    >
+                        🗑️ Excluir pedido
+                    </button>
+
+
+                    <hr>
+
+                `;
+
+
+                lista.appendChild(card);
 
             }
-
-
-            const statusClasse =
-
-                pedido.status === "Pago"
-
-                    ? "status-pago"
-
-                    : "status-pendente";
-
-
-            const pagamentoTexto =
-                pedido.pagamento ||
-                "Aguardando pagamento";
-
-
-            card.innerHTML = `
-
-                <h3>
-                    Pedido de
-                    ${pedido.nome}
-                </h3>
-
-                <p>
-
-                    <strong>
-                        Turma:
-                    </strong>
-
-                    ${pedido.turma}
-
-                </p>
-
-                <p>
-
-                    <strong>
-                        Data:
-                    </strong>
-
-                    ${pedido.data}
-
-                </p>
-
-                <p>
-
-                    <strong>
-                        Itens:
-                    </strong>
-
-                </p>
-
-                <div>
-                    ${itensHTML}
-                </div>
-
-                <p>
-
-                    <strong>
-                        Total:
-                    </strong>
-
-                    R$
-
-                    ${Number(
-                        pedido.total
-                    )
-                        .toFixed(2)
-                        .replace(".", ",")}
-
-                </p>
-
-                <p>
-
-                    <strong>
-                        Pagamento:
-                    </strong>
-
-                    ${pagamentoTexto}
-
-                </p>
-
-                <p>
-
-                    <strong>
-                        Status:
-                    </strong>
-
-                    <span
-                        class="${statusClasse}"
-                    >
-                        ${pedido.status}
-                    </span>
-
-                </p>
-
-               ${
-    pedido.status !== "Pago"
-        ? `
-            <button
-                type="button"
-                onclick="marcarPago(${pedido.id})"
-            >
-                🟢 Marcar como pago
-            </button>
-        `
-        : `
-            <button
-                type="button"
-                disabled
-            >
-                ✅ Pagamento confirmado
-            </button>
-        `
-}
-
-                <button
-                    type="button"
-                    onclick="excluirPedido(${pedido.id})"
-                >
-                    🗑️ Excluir pedido
-                </button>
-
-                <hr>
-
-            `;
-
-
-            lista.appendChild(
-                card
-            );
-
-        }
-    );
+        );
 
 
     atualizarEstatisticas();
-
 }
 
 
 // ==========================================
-// MARCAR PEDIDO COMO PAGO
+// MARCAR COMO PAGO
 // ==========================================
 
-function marcarPago(
-    id
-) {
+function marcarPago(id) {
 
     const pedidos =
         pegarPedidos();
@@ -1154,13 +743,20 @@ function marcarPago(
         pedidos.find(
             function (item) {
 
-                return item.id === id;
-
+                return (
+                    Number(item.id) ===
+                    Number(id)
+                );
             }
         );
 
 
     if (!pedido) {
+
+        alert(
+            "Pedido não encontrado."
+        );
+
         return;
     }
 
@@ -1173,23 +769,22 @@ function marcarPago(
         "Pagamento confirmado pelo administrador";
 
 
-    salvarPedidos(
-        pedidos
-    );
+    salvarPedidos(pedidos);
 
 
     mostrarPedidosAdmin();
-
 }
+
+
+// Disponibilizar para o HTML
+window.marcarPago = marcarPago;
 
 
 // ==========================================
 // EXCLUIR PEDIDO
 // ==========================================
 
-function excluirPedido(
-    id
-) {
+function excluirPedido(id) {
 
     const confirmar =
         confirm(
@@ -1198,6 +793,7 @@ function excluirPedido(
 
 
     if (!confirmar) {
+
         return;
     }
 
@@ -1210,20 +806,24 @@ function excluirPedido(
         pedidos.filter(
             function (pedido) {
 
-                return pedido.id !== id;
-
+                return (
+                    Number(pedido.id) !==
+                    Number(id)
+                );
             }
         );
 
 
-    salvarPedidos(
-        pedidos
-    );
+    salvarPedidos(pedidos);
 
 
     mostrarPedidosAdmin();
-
 }
+
+
+// Disponibilizar para o HTML
+window.excluirPedido =
+    excluirPedido;
 
 
 // ==========================================
@@ -1242,7 +842,7 @@ function atualizarEstatisticas() {
         );
 
 
-    const total =
+    const totalElemento =
         document.getElementById(
             "totalArrecadado"
         );
@@ -1260,85 +860,171 @@ function atualizarEstatisticas() {
         );
 
 
-    const quantidadePagos =
-        pedidos.filter(
-            function (pedido) {
-
-                return pedido.status === "Pago";
-
-            }
-        ).length;
-
-
-    const quantidadePendentes =
-        pedidos.filter(
-            function (pedido) {
-
-                return pedido.status !== "Pago";
-
-            }
-        ).length;
-
-
-    const valorTotalPago =
-        pedidos.reduce(
-            function (soma, pedido) {
-
-                if (
-                    pedido.status === "Pago"
-                ) {
-
-                    return (
-                        soma +
-                        Number(
-                            pedido.total
-                        )
-                    );
-
-                }
-
-                return soma;
-
-            },
-            0
-        );
-
+    // ------------------------------------------
+    // QUANTIDADE
+    // ------------------------------------------
 
     if (quantidade) {
 
         quantidade.textContent =
             pedidos.length;
-
     }
 
+
+    // ------------------------------------------
+    // TOTAL
+    // ------------------------------------------
+
+    if (totalElemento) {
+
+        const total =
+            pedidos.reduce(
+                function (soma, pedido) {
+
+                    return (
+                        soma +
+                        Number(pedido.total || 0)
+                    );
+
+                },
+                0
+            );
+
+
+        totalElemento.textContent =
+            "R$ " +
+            total
+                .toFixed(2)
+                .replace(".", ",");
+    }
+
+
+    // ------------------------------------------
+    // PENDENTES
+    // ------------------------------------------
 
     if (pendentes) {
 
-        pendentes.textContent =
-            quantidadePendentes;
+        const totalPendentes =
+            pedidos.filter(
+                function (pedido) {
 
+                    return (
+                        pedido.status ===
+                        "Pendente"
+                    );
+                }
+            ).length;
+
+
+        pendentes.textContent =
+            totalPendentes;
     }
 
+
+    // ------------------------------------------
+    // PAGOS
+    // ------------------------------------------
 
     if (pagos) {
 
+        const totalPagos =
+            pedidos.filter(
+                function (pedido) {
+
+                    return (
+                        pedido.status ===
+                        "Pago"
+                    );
+                }
+            ).length;
+
+
         pagos.textContent =
-            quantidadePagos;
-
+            totalPagos;
     }
-
-
-    if (total) {
-
-        total.textContent =
-            "R$ " +
-            valorTotalPago
-                .toFixed(2)
-                .replace(".", ",");
-
-    }
-
 }
+
+
+// ==========================================
+// ABRIR PAINEL ADMIN
+// ==========================================
+
+function abrirPainelAdmin() {
+
+    const senha =
+        prompt(
+            "Digite a senha do administrador:"
+        );
+
+
+    if (senha !== "1234") {
+
+        alert(
+            "Senha incorreta."
+        );
+
+        return;
+    }
+
+
+    const painel =
+        document.getElementById(
+            "painelAdmin"
+        );
+
+
+    if (!painel) {
+
+        alert(
+            "Erro: painel administrativo não encontrado."
+        );
+
+        return;
+    }
+
+
+    painel.style.display =
+        "block";
+
+
+    mostrarPedidosAdmin();
+
+
+    painel.scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+
+// Disponibilizar para o HTML
+window.abrirPainelAdmin =
+    abrirPainelAdmin;
+
+
+// ==========================================
+// FECHAR PAINEL ADMIN
+// ==========================================
+
+function fecharPainelAdmin() {
+
+    const painel =
+        document.getElementById(
+            "painelAdmin"
+        );
+
+
+    if (painel) {
+
+        painel.style.display =
+            "none";
+    }
+}
+
+
+// Disponibilizar para o HTML
+window.fecharPainelAdmin =
+    fecharPainelAdmin;
 
 
 // ==========================================
@@ -1349,17 +1035,50 @@ document.addEventListener(
     "DOMContentLoaded",
     function () {
 
-        atualizarQuantidade(
-            "salgado"
+        console.log(
+            "Sistema da Cantina Inovare carregado."
         );
 
-        atualizarQuantidade(
-            "suco"
-        );
 
-        atualizarQuantidade(
-            "acai"
-        );
+        // ------------------------------------------
+        // BOTÃO FAZER PEDIDO
+        // ------------------------------------------
+
+        const botaoPedido =
+            document.getElementById(
+                "fazerPedido"
+            );
+
+
+        if (botaoPedido) {
+
+            // Remove possíveis eventos antigos
+            botaoPedido.onclick =
+                null;
+
+
+            // Liga o botão diretamente
+            botaoPedido.addEventListener(
+                "click",
+                function (evento) {
+
+                    evento.preventDefault();
+
+                    fazerPedido();
+                }
+            );
+
+        } else {
+
+            console.error(
+                "Botão #fazerPedido não encontrado."
+            );
+        }
+
+
+        // ------------------------------------------
+        // ESTATÍSTICAS
+        // ------------------------------------------
 
         atualizarEstatisticas();
 
