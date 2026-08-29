@@ -13,7 +13,6 @@
     <!-- SUPABASE -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-
     <style>
 
         * {
@@ -35,15 +34,20 @@
             min-height: 100vh;
         }
 
-        /* CABEÇALHO */
+
+        /* =========================
+           CABEÇALHO
+        ========================= */
 
         .topo {
             background: white;
             min-height: 130px;
             padding: 20px 35px;
+
             display: flex;
             justify-content: space-between;
             align-items: center;
+
             border-bottom: 5px solid #1e5eaa;
         }
 
@@ -103,15 +107,21 @@
             background: #ccc;
         }
 
-        /* BANNER */
+
+        /* =========================
+           BANNER
+        ========================= */
 
         .banner {
             margin: 25px;
             min-height: 240px;
+
             border-radius: 18px;
             overflow: hidden;
+
             display: flex;
             align-items: stretch;
+
             background: #1261ae;
             color: white;
         }
@@ -119,6 +129,7 @@
         .banner-texto {
             width: 50%;
             padding: 45px;
+
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -149,13 +160,18 @@
             object-fit: cover;
         }
 
-        /* ÁREA DO ALUNO */
+
+        /* =========================
+           ÁREA DO ALUNO
+        ========================= */
 
         .area-aluno {
             margin: 25px;
             padding: 30px;
+
             background: white;
             border-radius: 18px;
+
             box-shadow: 0 5px 18px rgba(0,0,0,0.08);
         }
 
@@ -173,6 +189,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
+
             margin: 25px 0;
         }
 
@@ -185,8 +202,10 @@
         input[type="text"] {
             width: 100%;
             padding: 13px;
+
             border: 1px solid #ccc;
             border-radius: 8px;
+
             font-size: 16px;
         }
 
@@ -195,7 +214,10 @@
             font-size: 22px;
         }
 
-        /* PRODUTOS */
+
+        /* =========================
+           PRODUTOS
+        ========================= */
 
         .produtos {
             display: grid;
@@ -206,18 +228,25 @@
         .produto {
             border: 1px solid #ddd;
             border-radius: 15px;
+
             padding: 15px;
+
             text-align: center;
+
             background: #fff;
+
             box-shadow: 0 3px 10px rgba(0,0,0,0.06);
         }
 
         .produto-imagem {
             width: 100%;
             height: 160px;
+
             overflow: hidden;
+
             border-radius: 12px;
             margin-bottom: 12px;
+
             background: #eee;
         }
 
@@ -234,7 +263,9 @@
 
         .produto > strong {
             display: block;
+
             font-size: 20px;
+
             margin-bottom: 12px;
         }
 
@@ -244,11 +275,16 @@
 
         .selecionar {
             display: inline-block;
+
             background: #1d5fa8;
             color: white;
+
             padding: 9px 18px;
+
             border-radius: 7px;
+
             cursor: pointer;
+
             margin-bottom: 12px;
         }
 
@@ -258,20 +294,27 @@
 
         .quantidade {
             display: flex;
+
             justify-content: center;
             align-items: center;
+
             gap: 18px;
+
             margin-top: 8px;
         }
 
         .quantidade button {
             width: 42px;
             height: 42px;
+
             border: none;
             border-radius: 50%;
+
             background: #1764b2;
             color: white;
+
             font-size: 25px;
+
             cursor: pointer;
         }
 
@@ -282,10 +325,14 @@
         .quantidade span {
             font-size: 20px;
             font-weight: bold;
+
             min-width: 20px;
         }
 
-        /* PAGAMENTO */
+
+        /* =========================
+           PAGAMENTO
+        ========================= */
 
         .pagamento {
             margin-top: 30px;
@@ -297,8 +344,11 @@
 
         .pix {
             background: #edf6ff;
+
             border-left: 6px solid #1d5fa8;
+
             border-radius: 12px;
+
             padding: 20px;
         }
 
@@ -316,21 +366,52 @@
             word-break: break-word;
         }
 
-        /* PAGAMENTO DO PEDIDO */
+
+        /* =========================
+           TOTAL
+        ========================= */
+
+        .total-pedido {
+            margin-top: 20px;
+
+            padding: 18px;
+
+            background: #1d5fa8;
+            color: white;
+
+            border-radius: 10px;
+
+            text-align: center;
+
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+
+        /* =========================
+           PAGAMENTO DO PEDIDO
+        ========================= */
 
         .pagamento-pedido {
             margin-top: 25px;
+
             padding: 20px;
+
             background: white;
+
             border: 1px solid #d7e2ed;
+
             border-radius: 12px;
         }
 
         .valor-pagamento,
         .tempo-pagamento {
             display: flex;
+
             justify-content: space-between;
+
             padding: 12px 0;
+
             border-bottom: 1px solid #ddd;
         }
 
@@ -344,63 +425,42 @@
             font-size: 20px;
         }
 
-        .qr-container {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        #qrCode {
-            width: 180px;
-            height: 180px;
-            margin: auto;
-            border: 2px dashed #aaa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-        }
-
-        .pix-copia-linha {
-            display: flex;
-            gap: 8px;
-        }
-
-        .pix-copia-linha input {
-            flex: 1;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 7px;
-        }
-
-        .pix-copia-linha button {
-            border: none;
-            background: #1d5fa8;
-            color: white;
-            border-radius: 7px;
-            padding: 0 18px;
-            cursor: pointer;
-        }
-
         .status-pagamento {
             margin-top: 20px;
+
             padding: 12px;
+
             border-radius: 8px;
+
             text-align: center;
+
             background: #fff3cd;
         }
 
-        /* BOTÃO */
+
+        /* =========================
+           BOTÃO PEDIDO
+        ========================= */
 
         .botao-pedido {
             width: 100%;
+
             padding: 16px;
+
             margin-top: 25px;
+
             border: none;
+
             border-radius: 9px;
+
             background: #1764b2;
+
             color: white;
+
             font-size: 18px;
+
             font-weight: bold;
+
             cursor: pointer;
         }
 
@@ -413,14 +473,55 @@
             cursor: not-allowed;
         }
 
-        /* ADMIN */
+
+        /* =========================
+           MENSAGEM
+        ========================= */
+
+        #mensagem {
+            display: none;
+
+            margin-top: 15px;
+
+            padding: 15px;
+
+            border-radius: 8px;
+
+            text-align: center;
+
+            font-weight: bold;
+        }
+
+        .sucesso {
+            display: block !important;
+
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .erro {
+            display: block !important;
+
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+
+        /* =========================
+           ADMINISTRADOR
+        ========================= */
 
         .administrador {
             margin: 25px;
+
             padding: 35px;
+
             text-align: center;
+
             border-top: 5px solid #1d5fa8;
+
             border-radius: 18px;
+
             box-shadow: 0 5px 18px rgba(0,0,0,0.08);
         }
 
@@ -433,55 +534,147 @@
             color: #666;
         }
 
-        .administrador button {
+        .administrador button,
+        #painelAdmin button {
             background: #1764b2;
+
             color: white;
+
             border: none;
+
             padding: 13px 25px;
+
             border-radius: 8px;
+
             font-size: 16px;
+
             font-weight: bold;
+
             cursor: pointer;
         }
 
-        /* MENSAGEM */
+        .administrador button:hover,
+        #painelAdmin button:hover {
+            background: #0e4d8c;
+        }
 
-        #mensagem {
-            display: none;
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 8px;
+
+        /* =========================
+           PAINEL ADMIN
+        ========================= */
+
+        #painelAdmin {
+            margin: 25px;
+
+            padding: 30px;
+
+            background: white;
+
+            border-radius: 18px;
+
+            box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+        }
+
+        #painelAdmin h2 {
+            color: #1d5fa8;
+        }
+
+        .estatisticas {
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 15px;
+
+            margin: 20px 0;
+        }
+
+        .estatistica {
+            padding: 20px;
+
+            background: #edf6ff;
+
+            border-radius: 12px;
+
             text-align: center;
+        }
+
+        .estatistica span {
+            display: block;
+            color: #666;
+        }
+
+        .estatistica strong {
+            display: block;
+
+            color: #1d5fa8;
+
+            font-size: 25px;
+
+            margin-top: 8px;
+        }
+
+        .pedido-admin {
+            border: 1px solid #ddd;
+
+            padding: 18px;
+
+            border-radius: 10px;
+
+            margin-bottom: 12px;
+
+            background: #fff;
+        }
+
+        .pedido-admin h4 {
+            margin-top: 0;
+
+            color: #1d5fa8;
+
+            font-size: 19px;
+        }
+
+        .pedido-admin .pedido-status {
+            display: inline-block;
+
+            margin-top: 10px;
+
+            padding: 6px 10px;
+
+            border-radius: 6px;
+
+            background: #fff3cd;
+
+            color: #856404;
+
             font-weight: bold;
         }
 
-        .sucesso {
-            display: block !important;
-            background: #d1fae5;
-            color: #065f46;
-        }
 
-        .erro {
-            display: block !important;
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        /* RODAPÉ */
+        /* =========================
+           RODAPÉ
+        ========================= */
 
         footer {
             text-align: center;
+
             padding: 25px;
+
             color: #777;
         }
 
-        /* CELULAR */
+
+        /* =========================
+           CELULAR
+        ========================= */
 
         @media (max-width: 800px) {
 
             .topo {
                 flex-direction: column;
+
                 gap: 20px;
+
                 text-align: center;
             }
 
@@ -509,13 +702,21 @@
             .dados-aluno {
                 grid-template-columns: 1fr;
             }
+
+            .estatisticas {
+                grid-template-columns: 1fr;
+            }
+
         }
+
 
         @media (max-width: 500px) {
 
             .area-aluno,
-            .administrador {
+            .administrador,
+            #painelAdmin {
                 margin: 12px;
+
                 padding: 20px;
             }
 
@@ -527,13 +728,6 @@
                 flex-direction: column;
             }
 
-            .pix-copia-linha {
-                flex-direction: column;
-            }
-
-            .pix-copia-linha button {
-                padding: 12px;
-            }
         }
 
     </style>
@@ -543,10 +737,13 @@
 
 <body>
 
+
 <div class="app">
 
 
-    <!-- CABEÇALHO -->
+    <!-- =========================
+         CABEÇALHO
+    ========================= -->
 
     <header class="topo">
 
@@ -602,7 +799,9 @@
     </header>
 
 
-    <!-- BANNER -->
+    <!-- =========================
+         BANNER
+    ========================= -->
 
     <section class="banner">
 
@@ -632,9 +831,12 @@
     </section>
 
 
-    <!-- ÁREA DO ALUNO -->
-
     <main>
+
+
+        <!-- =========================
+             ÁREA DO ALUNO
+        ========================= -->
 
         <section class="area-aluno">
 
@@ -646,8 +848,6 @@
                 Preencha seus dados e faça seu pedido.
             </p>
 
-
-            <!-- DADOS -->
 
             <div class="dados-aluno">
 
@@ -688,7 +888,9 @@
             </h3>
 
 
-            <!-- PRODUTOS -->
+            <!-- =========================
+                 PRODUTOS
+            ========================= -->
 
             <div class="produtos">
 
@@ -878,7 +1080,21 @@
             </div>
 
 
-            <!-- PAGAMENTO -->
+            <!-- TOTAL -->
+
+            <div class="total-pedido">
+
+                Total:
+                <span id="totalPedido">
+                    R$ 0,00
+                </span>
+
+            </div>
+
+
+            <!-- =========================
+                 PAGAMENTO
+            ========================= -->
 
             <div class="pagamento">
 
@@ -947,7 +1163,7 @@
                         <div class="tempo-pagamento">
 
                             <span>
-                                ⏱️ Tempo para pagamento
+                                ⏱️ Tempo para pagamento:
                             </span>
 
                             <strong id="contadorPagamento">
@@ -957,56 +1173,11 @@
                         </div>
 
 
-                        <div class="qr-container">
+                        <div class="status-pagamento"
+                             id="statusPagamento">
 
-                            <p>
-                                📱 Escaneie o QR Code para pagar
-                            </p>
+                            🟡 Pedido aguardando pagamento via Pix.
 
-                            <div id="qrCode">
-
-                                <span>
-                                    QR Code será gerado aqui
-                                </span>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="pix-copia">
-
-                            <label for="pixCopiaCola">
-                                Pix Copia e Cola
-                            </label>
-
-
-                            <div class="pix-copia-linha">
-
-                                <input
-                                    type="text"
-                                    id="pixCopiaCola"
-                                    readonly
-                                    placeholder="Chave Pix"
-                                >
-
-                                <button
-                                    type="button"
-                                    onclick="copiarPix()"
-                                >
-                                    Copiar
-                                </button>
-
-                            </div>
-
-                        </div>
-
-
-                        <div
-                            id="statusPagamento"
-                            class="status-pagamento"
-                        >
-                            🟡 Aguardando pagamento
                         </div>
 
                     </div>
@@ -1024,7 +1195,9 @@
                 class="botao-pedido"
                 onclick="fazerPedido()"
             >
+
                 🛒 Fazer Pedido
+
             </button>
 
 
@@ -1033,7 +1206,9 @@
         </section>
 
 
-        <!-- ADMIN -->
+        <!-- =========================
+             ADMIN
+        ========================= -->
 
         <section class="administrador">
 
@@ -1045,19 +1220,114 @@
                 Acesso exclusivo para administração dos pedidos.
             </p>
 
+
             <button
                 type="button"
                 onclick="abrirPainelAdmin()"
             >
+
                 🔒 Entrar no Painel
+
             </button>
 
         </section>
 
+
+        <!-- =========================
+             PAINEL ADMIN
+        ========================= -->
+
+        <section
+            id="painelAdmin"
+            style="display:none;"
+        >
+
+            <h2>
+                📋 Painel do Administrador
+            </h2>
+
+
+            <div class="estatisticas">
+
+
+                <div class="estatistica">
+
+                    <span>
+                        Pedidos
+                    </span>
+
+                    <strong id="quantidadePedidos">
+                        0
+                    </strong>
+
+                </div>
+
+
+                <div class="estatistica">
+
+                    <span>
+                        Total arrecadado
+                    </span>
+
+                    <strong id="totalArrecadado">
+                        R$ 0,00
+                    </strong>
+
+                </div>
+
+
+                <div class="estatistica">
+
+                    <span>
+                        Pendentes
+                    </span>
+
+                    <strong id="pedidosPendentes">
+                        0
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <h3>
+                📦 Pedidos recebidos
+            </h3>
+
+
+            <div id="listaPedidos">
+
+                <p>
+                    Carregando pedidos...
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                onclick="carregarPedidosAdmin()"
+            >
+                🔄 Atualizar pedidos
+            </button>
+
+
+            <br><br>
+
+
+            <button
+                type="button"
+                onclick="fecharPainelAdmin()"
+            >
+                Sair do painel
+            </button>
+
+        </section>
+
+
     </main>
 
-
-    <!-- RODAPÉ -->
 
     <footer>
 
@@ -1067,201 +1337,408 @@
 
     </footer>
 
+
 </div>
+
 
 
 <script>
 
 
-    /* =====================================================
-       CONFIGURAÇÃO DO SUPABASE
-    ===================================================== */
+/* =====================================================
+   SUPABASE
+===================================================== */
 
 
-    const SUPABASE_URL =
-        "https://duvwemmqgdwlastmfegh.supabase.co";
+const SUPABASE_URL =
+    "https://duvwemmqgdwlastmfegh.supabase.co";
 
 
-    const SUPABASE_KEY =
-        "sb_publishable_vlsLJ9-0Jrij35lSz3cigQ_entN7J8c";
+const SUPABASE_KEY =
+    "sb_publishable_vlsLJ9-0Jrij35lSz3cigQ_entN7J8c";
 
 
-    const supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_KEY
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+
+
+/* =====================================================
+   PRODUTOS
+===================================================== */
+
+
+const produtos = {
+
+    salgado: {
+
+        nome: "Salgado",
+
+        preco: 6.00,
+
+        quantidade: 0
+
+    },
+
+
+    suco: {
+
+        nome: "Suco",
+
+        preco: 3.50,
+
+        quantidade: 0
+
+    },
+
+
+    acai: {
+
+        nome: "Açaí",
+
+        preco: 3.50,
+
+        quantidade: 0
+
+    }
+
+};
+
+
+
+/* =====================================================
+   AUMENTAR
+===================================================== */
+
+
+function aumentar(produto) {
+
+    produtos[produto].quantidade++;
+
+    atualizarQuantidade(produto);
+
+    atualizarTotal();
+
+}
+
+
+
+/* =====================================================
+   DIMINUIR
+===================================================== */
+
+
+function diminuir(produto) {
+
+    if (
+        produtos[produto].quantidade > 0
+    ) {
+
+        produtos[produto].quantidade--;
+
+    }
+
+    atualizarQuantidade(produto);
+
+    atualizarTotal();
+
+}
+
+
+
+/* =====================================================
+   ATUALIZAR QUANTIDADE
+===================================================== */
+
+
+function atualizarQuantidade(produto) {
+
+    document.getElementById(
+        "qtd-" + produto
+    ).textContent =
+        produtos[produto].quantidade;
+
+}
+
+
+
+/* =====================================================
+   SELECIONAR PRODUTO
+===================================================== */
+
+
+function selecionarProduto(produto) {
+
+    const checkbox =
+        document.getElementById(
+            "check-" + produto
         );
 
 
-    /* =====================================================
-       PRODUTOS
-    ===================================================== */
+    if (
+        checkbox.checked &&
+        produtos[produto].quantidade === 0
+    ) {
 
-
-    const produtos = {
-
-        salgado: {
-            nome: "Salgado",
-            preco: 6.00,
-            quantidade: 0
-        },
-
-        suco: {
-            nome: "Suco",
-            preco: 3.50,
-            quantidade: 0
-        },
-
-        acai: {
-            nome: "Açaí",
-            preco: 3.50,
-            quantidade: 0
-        }
-
-    };
-
-
-    /* =====================================================
-       AUMENTAR
-    ===================================================== */
-
-
-    function aumentar(produto) {
-
-        produtos[produto].quantidade++;
-
-        document.getElementById(
-            "check-" + produto
-        ).checked = true;
-
-        atualizarQuantidade(produto);
-
-        atualizarTotal();
+        produtos[produto].quantidade = 1;
 
     }
 
 
-    /* =====================================================
-       DIMINUIR
-    ===================================================== */
+    if (!checkbox.checked) {
 
-
-    function diminuir(produto) {
-
-        if (
-            produtos[produto].quantidade > 0
-        ) {
-
-            produtos[produto].quantidade--;
-
-        }
-
-
-        if (
-            produtos[produto].quantidade === 0
-        ) {
-
-            document.getElementById(
-                "check-" + produto
-            ).checked = false;
-
-        }
-
-
-        atualizarQuantidade(produto);
-
-        atualizarTotal();
+        produtos[produto].quantidade = 0;
 
     }
 
 
-    /* =====================================================
-       ATUALIZAR QUANTIDADE
-    ===================================================== */
+    atualizarQuantidade(produto);
+
+    atualizarTotal();
+
+}
 
 
-    function atualizarQuantidade(produto) {
 
-        document.getElementById(
-            "qtd-" + produto
-        ).textContent =
+/* =====================================================
+   CALCULAR TOTAL
+===================================================== */
+
+
+function calcularTotal() {
+
+    let total = 0;
+
+
+    for (
+        const produto in produtos
+    ) {
+
+        total +=
+            produtos[produto].preco *
             produtos[produto].quantidade;
 
     }
 
 
-    /* =====================================================
-       SELECIONAR PRODUTO
-    ===================================================== */
+    return total;
+
+}
 
 
-    function selecionarProduto(produto) {
 
-        const checkbox =
-            document.getElementById(
-                "check-" + produto
+/* =====================================================
+   ATUALIZAR TOTAL
+===================================================== */
+
+
+function atualizarTotal() {
+
+    const total =
+        calcularTotal();
+
+
+    document.getElementById(
+        "totalPedido"
+    ).textContent =
+        formatarMoeda(total);
+
+
+    document.getElementById(
+        "valorPagamento"
+    ).textContent =
+        formatarMoeda(total);
+
+}
+
+
+
+/* =====================================================
+   FORMATAR MOEDA
+===================================================== */
+
+
+function formatarMoeda(valor) {
+
+    return valor.toLocaleString(
+        "pt-BR",
+        {
+            style: "currency",
+            currency: "BRL"
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   FAZER PEDIDO
+===================================================== */
+
+
+async function fazerPedido() {
+
+
+    const nome =
+        document.getElementById(
+            "nomeAluno"
+        ).value.trim();
+
+
+    const turma =
+        document.getElementById(
+            "turmaAluno"
+        ).value.trim();
+
+
+    /* VERIFICAR NOME */
+
+    if (!nome) {
+
+        mostrarMensagem(
+            "Digite o nome do aluno.",
+            false
+        );
+
+        document.getElementById(
+            "nomeAluno"
+        ).focus();
+
+        return;
+
+    }
+
+
+    /* VERIFICAR TURMA */
+
+    if (!turma) {
+
+        mostrarMensagem(
+            "Digite a turma.",
+            false
+        );
+
+        document.getElementById(
+            "turmaAluno"
+        ).focus();
+
+        return;
+
+    }
+
+
+    /* TOTAL */
+
+    const total =
+        calcularTotal();
+
+
+    if (total <= 0) {
+
+        mostrarMensagem(
+            "Selecione pelo menos um lanche.",
+            false
+        );
+
+        return;
+
+    }
+
+
+    /* QUANTIDADES */
+
+    const salgado =
+        produtos.salgado.quantidade;
+
+
+    const suco =
+        produtos.suco.quantidade;
+
+
+    const acai =
+        produtos.acai.quantidade;
+
+
+    /* BOTÃO */
+
+    const botao =
+        document.getElementById(
+            "fazerPedido"
+        );
+
+
+    botao.disabled = true;
+
+    botao.textContent =
+        "⏳ Enviando pedido...";
+
+
+    try {
+
+
+        /* =================================================
+           ENVIA PARA SUPABASE
+        ================================================= */
+
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+
+            .from("pedidos")
+
+            .insert([{
+
+                nome: nome,
+
+                turma: turma,
+
+                salgado: salgado,
+
+                suco: suco,
+
+                acai: acai,
+
+                total: total
+
+            }])
+
+            .select();
+
+
+        if (error) {
+
+            console.error(
+                "Erro Supabase:",
+                error
             );
 
-
-        if (
-            checkbox.checked &&
-            produtos[produto].quantidade === 0
-        ) {
-
-            produtos[produto].quantidade = 1;
+            throw error;
 
         }
 
 
-        if (!checkbox.checked) {
-
-            produtos[produto].quantidade = 0;
-
-        }
+        /* SUCESSO */
 
 
-        atualizarQuantidade(produto);
-
-        atualizarTotal();
-
-    }
-
-
-    /* =====================================================
-       CALCULAR TOTAL
-    ===================================================== */
+        mostrarMensagem(
+            "✅ Pedido enviado com sucesso!",
+            true
+        );
 
 
-    function calcularTotal() {
-
-        let total = 0;
+        /* MOSTRAR PAGAMENTO */
 
 
-        for (
-            const produto in produtos
-        ) {
-
-            total +=
-                produtos[produto].preco *
-                produtos[produto].quantidade;
-
-        }
-
-
-        return total;
-
-    }
-
-
-    /* =====================================================
-       ATUALIZAR TOTAL
-    ===================================================== */
-
-
-    function atualizarTotal() {
-
-        const total =
-            calcularTotal();
+        document.getElementById(
+            "pagamentoPedido"
+        ).style.display =
+            "block";
 
 
         document.getElementById(
@@ -1269,510 +1746,594 @@
         ).textContent =
             formatarMoeda(total);
 
-    }
+
+        document.getElementById(
+            "statusPagamento"
+        ).textContent =
+            "🟡 Pedido aguardando pagamento via Pix.";
 
 
-    /* =====================================================
-       FORMATAR MOEDA
-    ===================================================== */
+        iniciarContador();
 
 
-    function formatarMoeda(valor) {
+        /* LIMPAR FORMULÁRIO */
 
-        return valor.toLocaleString(
-            "pt-BR",
-            {
-                style: "currency",
-                currency: "BRL"
-            }
+
+        document.getElementById(
+            "nomeAluno"
+        ).value = "";
+
+
+        document.getElementById(
+            "turmaAluno"
+        ).value = "";
+
+
+        for (
+            const produto in produtos
+        ) {
+
+            produtos[produto].quantidade = 0;
+
+            atualizarQuantidade(produto);
+
+        }
+
+
+        document.getElementById(
+            "check-salgado"
+        ).checked = false;
+
+
+        document.getElementById(
+            "check-suco"
+        ).checked = false;
+
+
+        document.getElementById(
+            "check-acai"
+        ).checked = false;
+
+
+        atualizarTotal();
+
+
+    } catch (erro) {
+
+
+        console.error(
+            erro
         );
 
-    }
+
+        mostrarMensagem(
+
+            "❌ Não foi possível enviar o pedido. " +
+            "Verifique a tabela 'pedidos' no Supabase.",
+
+            false
+
+        );
 
 
-    /* =====================================================
-       MOSTRAR MENSAGEM
-    ===================================================== */
+    } finally {
 
 
-    function mostrarMensagem(
-        texto,
-        sucesso
-    ) {
-
-        const mensagem =
-            document.getElementById(
-                "mensagem"
-            );
-
-
-        mensagem.textContent =
-            texto;
-
-
-        mensagem.className =
-            sucesso
-                ? "sucesso"
-                : "erro";
-
-    }
-
-
-    /* =====================================================
-       FAZER PEDIDO
-    ===================================================== */
-
-
-    async function fazerPedido() {
-
-
-        const nome =
-            document.getElementById(
-                "nomeAluno"
-            ).value.trim();
-
-
-        const turma =
-            document.getElementById(
-                "turmaAluno"
-            ).value.trim();
-
-
-        /* VERIFICAR NOME */
-
-
-        if (!nome) {
-
-            mostrarMensagem(
-                "Digite o nome do aluno.",
-                false
-            );
-
-            document.getElementById(
-                "nomeAluno"
-            ).focus();
-
-            return;
-
-        }
-
-
-        /* VERIFICAR TURMA */
-
-
-        if (!turma) {
-
-            mostrarMensagem(
-                "Digite a turma.",
-                false
-            );
-
-            document.getElementById(
-                "turmaAluno"
-            ).focus();
-
-            return;
-
-        }
-
-
-        /* VERIFICAR PRODUTOS */
-
-
-        const total =
-            calcularTotal();
-
-
-        if (total <= 0) {
-
-            mostrarMensagem(
-                "Selecione pelo menos um lanche.",
-                false
-            );
-
-            return;
-
-        }
-
-
-        /* BOTÃO */
-
-
-        const botao =
-            document.getElementById(
-                "fazerPedido"
-            );
-
-
-        botao.disabled = true;
+        botao.disabled = false;
 
         botao.textContent =
-            "⏳ Enviando pedido...";
+            "🛒 Fazer Pedido";
+
+    }
+
+}
 
 
-        try {
+
+/* =====================================================
+   MENSAGEM
+===================================================== */
 
 
-            /* =================================================
-               QUANTIDADES
-            ================================================= */
+function mostrarMensagem(
+    texto,
+    sucesso
+) {
+
+    const mensagem =
+        document.getElementById(
+            "mensagem"
+        );
 
 
-            const salgado =
-                produtos.salgado.quantidade;
+    mensagem.textContent =
+        texto;
 
 
-            const suco =
-                produtos.suco.quantidade;
+    mensagem.className =
+        sucesso
+            ? "sucesso"
+            : "erro";
+
+}
 
 
-            const acai =
-                produtos.acai.quantidade;
+
+/* =====================================================
+   CONTADOR
+===================================================== */
 
 
-            /* =================================================
-               ENVIAR PARA SUPABASE
-            ================================================= */
+let contadorIntervalo;
 
 
-            const { data, error } =
-                await supabaseClient
-                    .from("pedidos")
-                    .insert([
-
-                        {
-
-                            nome: nome,
-
-                            turma: turma,
-
-                            salgado: salgado,
-
-                            suco: suco,
-
-                            acai: acai,
-
-                            total: total
-
-                        }
-
-                    ])
-                    .select();
+function iniciarContador() {
 
 
-            /* VERIFICAR ERRO */
+    clearInterval(
+        contadorIntervalo
+    );
 
 
-            if (error) {
-
-                console.error(
-                    "Erro Supabase:",
-                    error
-                );
-
-                throw error;
-
-            }
+    let segundos = 600;
 
 
-            /* =================================================
-               SUCESSO
-            ================================================= */
+    const contador =
+        document.getElementById(
+            "contadorPagamento"
+        );
 
 
-            mostrarMensagem(
-                "✅ Pedido enviado com sucesso!",
-                true
+    function atualizar() {
+
+
+        const minutos =
+            Math.floor(
+                segundos / 60
             );
 
 
-            /* MOSTRAR PAGAMENTO */
+        const segundosRestantes =
+            segundos % 60;
 
 
-            document.getElementById(
-                "pagamentoPedido"
-            ).style.display =
-                "block";
+        contador.textContent =
+
+            String(minutos)
+                .padStart(2, "0")
+
+            +
+
+            ":"
+
+            +
+
+            String(segundosRestantes)
+                .padStart(2, "0");
 
 
-            document.getElementById(
-                "valorPagamento"
-            ).textContent =
-                formatarMoeda(total);
+        if (
+            segundos <= 0
+        ) {
 
 
-            document.getElementById(
-                "pixCopiaCola"
-            ).value =
-                "ac33d16b-aa57-4f63-8a76-a6f06c7992cd";
+            clearInterval(
+                contadorIntervalo
+            );
 
 
             document.getElementById(
                 "statusPagamento"
             ).textContent =
-                "🟡 Pedido enviado. Aguardando pagamento.";
 
+                "🔴 Tempo para pagamento encerrado.";
 
-            iniciarContador();
-
-
-            /* LIMPAR CAMPOS */
-
-
-            document.getElementById(
-                "nomeAluno"
-            ).value = "";
-
-
-            document.getElementById(
-                "turmaAluno"
-            ).value = "";
-
-
-            for (
-                const produto in produtos
-            ) {
-
-                produtos[produto].quantidade = 0;
-
-
-                document.getElementById(
-                    "check-" + produto
-                ).checked = false;
-
-
-                atualizarQuantidade(
-                    produto
-                );
-
-            }
-
-
-            atualizarTotal();
-
-
-        } catch (erro) {
-
-
-            console.error(
-                erro
-            );
-
-
-            mostrarMensagem(
-                "❌ Não foi possível enviar o pedido. Verifique se a tabela 'pedidos' está configurada corretamente no Supabase.",
-                false
-            );
-
-        } finally {
-
-
-            botao.disabled = false;
-
-            botao.textContent =
-                "🛒 Fazer Pedido";
-
-        }
-
-    }
-
-
-    /* =====================================================
-       COPIAR PIX
-    ===================================================== */
-
-
-    function copiarPix() {
-
-        const campo =
-            document.getElementById(
-                "pixCopiaCola"
-            );
-
-
-        if (!campo.value) {
-
-            alert(
-                "Ainda não existe uma chave Pix."
-            );
 
             return;
 
         }
 
 
-        navigator.clipboard
-            .writeText(
-                campo.value
-            )
-            .then(
-                function() {
-
-                    alert(
-                        "Pix copiado!"
-                    );
-
-                }
-            )
-            .catch(
-                function() {
-
-                    campo.select();
-
-                    document.execCommand(
-                        "copy"
-                    );
-
-                    alert(
-                        "Pix copiado!"
-                    );
-
-                }
-            );
+        segundos--;
 
     }
 
 
-    /* =====================================================
-       CONTADOR
-    ===================================================== */
+    atualizar();
 
 
-    let contadorIntervalo;
+    contadorIntervalo =
+        setInterval(
+            atualizar,
+            1000
+        );
+
+}
 
 
-    function iniciarContador() {
+
+/* =====================================================
+   ADMIN
+===================================================== */
 
 
-        clearInterval(
-            contadorIntervalo
+async function abrirPainelAdmin() {
+
+
+    const senha =
+        prompt(
+            "Digite a senha do administrador:"
         );
 
 
-        let segundos = 600;
+    if (
+        senha === null
+    ) {
+
+        return;
+
+    }
 
 
-        const contador =
-            document.getElementById(
-                "contadorPagamento"
+    if (
+        senha !== "1234"
+    ) {
+
+        alert(
+            "❌ Senha incorreta."
+        );
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "painelAdmin"
+    ).style.display =
+        "block";
+
+
+    document.getElementById(
+        "painelAdmin"
+    ).scrollIntoView({
+
+        behavior: "smooth"
+
+    });
+
+
+    await carregarPedidosAdmin();
+
+}
+
+
+
+/* =====================================================
+   FECHAR ADMIN
+===================================================== */
+
+
+function fecharPainelAdmin() {
+
+    document.getElementById(
+        "painelAdmin"
+    ).style.display =
+        "none";
+
+}
+
+
+
+/* =====================================================
+   CARREGAR PEDIDOS DO SUPABASE
+===================================================== */
+
+
+async function carregarPedidosAdmin() {
+
+
+    const lista =
+        document.getElementById(
+            "listaPedidos"
+        );
+
+
+    lista.innerHTML =
+        "<p>⏳ Carregando pedidos...</p>";
+
+
+    try {
+
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+
+            .from("pedidos")
+
+            .select("*")
+
+            .order(
+                "id",
+                {
+                    ascending: false
+                }
             );
 
 
-        function atualizar() {
+        if (error) {
+
+            console.error(
+                error
+            );
+
+            throw error;
+
+        }
 
 
-            const minutos =
-                Math.floor(
-                    segundos / 60
-                );
+        const pedidos =
+            data || [];
 
 
-            const seg =
-                segundos % 60;
+        /* QUANTIDADE */
 
 
-            contador.textContent =
-                String(minutos)
-                    .padStart(2, "0")
-                + ":" +
-                String(seg)
-                    .padStart(2, "0");
+        document.getElementById(
+            "quantidadePedidos"
+        ).textContent =
+            pedidos.length;
 
 
-            if (
-                segundos <= 0
-            ) {
+        /* TOTAL */
 
 
-                clearInterval(
-                    contadorIntervalo
-                );
+        let totalArrecadado = 0;
 
 
-                document.getElementById(
-                    "statusPagamento"
-                ).textContent =
-                    "🔴 Tempo para pagamento encerrado.";
+        pedidos.forEach(
+            pedido => {
 
-
-                return;
+                totalArrecadado +=
+                    Number(
+                        pedido.total
+                    ) || 0;
 
             }
+        );
 
 
-            segundos--;
-
-        }
-
-
-        atualizar();
-
-
-        contadorIntervalo =
-            setInterval(
-                atualizar,
-                1000
+        document.getElementById(
+            "totalArrecadado"
+        ).textContent =
+            formatarMoeda(
+                totalArrecadado
             );
 
-    }
+
+        /* PENDENTES */
 
 
-    /* =====================================================
-       ADMIN
-    ===================================================== */
+        document.getElementById(
+            "pedidosPendentes"
+        ).textContent =
+            pedidos.length;
 
 
-    function abrirPainelAdmin() {
-
-
-        const senha =
-            prompt(
-                "Digite a senha do administrador:"
-            );
+        /* SEM PEDIDOS */
 
 
         if (
-            senha === null
+            pedidos.length === 0
         ) {
+
+            lista.innerHTML =
+
+                "<p>📭 Nenhum pedido recebido ainda.</p>";
 
             return;
 
         }
 
 
-        if (
-            senha !== "1234"
-        ) {
-
-            alert(
-                "❌ Senha incorreta."
-            );
-
-            return;
-
-        }
+        /* LIMPAR */
 
 
-        /*
-           IMPORTANTE:
-
-           O administrador será aberto
-           em uma página separada.
-        */
+        lista.innerHTML = "";
 
 
-        window.location.href =
-            "admin.html";
+        /* MOSTRAR PEDIDOS */
+
+
+        pedidos.forEach(
+            function(pedido) {
+
+
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                div.className =
+                    "pedido-admin";
+
+
+                let itens = "";
+
+
+                if (
+                    Number(
+                        pedido.salgado
+                    ) > 0
+                ) {
+
+                    itens +=
+                        "🥪 Salgado × " +
+                        pedido.salgado +
+                        "<br>";
+
+                }
+
+
+                if (
+                    Number(
+                        pedido.suco
+                    ) > 0
+                ) {
+
+                    itens +=
+                        "🧃 Suco × " +
+                        pedido.suco +
+                        "<br>";
+
+                }
+
+
+                if (
+                    Number(
+                        pedido.acai
+                    ) > 0
+                ) {
+
+                    itens +=
+                        "🍧 Açaí × " +
+                        pedido.acai +
+                        "<br>";
+
+                }
+
+
+                div.innerHTML = `
+
+                    <h4>
+                        📦 Pedido #${pedido.id}
+                    </h4>
+
+                    <strong>Aluno:</strong>
+                    ${escaparHTML(pedido.nome)}
+
+                    <br><br>
+
+                    <strong>Turma:</strong>
+                    ${escaparHTML(pedido.turma)}
+
+                    <br><br>
+
+                    <strong>Itens:</strong>
+
+                    <br>
+
+                    ${itens}
+
+                    <br>
+
+                    <strong>Total:</strong>
+                    ${formatarMoeda(
+                        Number(pedido.total)
+                    )}
+
+                    <br>
+
+                    <span class="pedido-status">
+                        🟡 Aguardando pagamento
+                    </span>
+
+                `;
+
+
+                lista.appendChild(
+                    div
+                );
+
+            }
+        );
+
+
+    } catch (erro) {
+
+
+        console.error(
+            "Erro ao carregar pedidos:",
+            erro
+        );
+
+
+        lista.innerHTML = `
+
+            <p style="color:#b91c1c;font-weight:bold;">
+
+                ❌ Não foi possível carregar os pedidos.
+
+            </p>
+
+            <p>
+
+                Verifique se a tabela
+                <strong>pedidos</strong>
+                existe no Supabase e se as permissões
+                permitem leitura.
+
+            </p>
+
+        `;
 
     }
 
-
-    /* =====================================================
-       INICIAR
-    ===================================================== */
+}
 
 
-    atualizarTotal();
+
+/* =====================================================
+   SEGURANÇA DO TEXTO
+===================================================== */
+
+
+function escaparHTML(
+    texto
+) {
+
+    return String(
+        texto ?? ""
+    )
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+
+/* =====================================================
+   INICIAR
+===================================================== */
+
+
+atualizarTotal();
 
 
 </script>
