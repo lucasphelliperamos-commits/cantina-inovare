@@ -536,6 +536,48 @@
             margin-top: 20px;
         }
 
+        .botao-esqueci {
+            background: transparent !important;
+            color: #1d63b6 !important;
+            padding: 8px 12px !important;
+            margin-top: 8px;
+            text-decoration: underline;
+        }
+
+        .botao-trocar-senha {
+            background: #7b1fa2 !important;
+        }
+
+        .reset-area {
+            display: none;
+            max-width: 520px;
+            margin: 25px auto;
+            padding: 25px;
+            background: #f7f9fc;
+            border: 1px solid #dfe5ec;
+            border-radius: 14px;
+            text-align: left;
+        }
+
+        .reset-area h3 {
+            margin-top: 0;
+            color: #1d63b6;
+        }
+
+        .reset-area input {
+            width: 100%;
+            padding: 14px;
+            margin: 8px 0 14px;
+            border: 1px solid #d5dce5;
+            border-radius: 9px;
+            font-size: 16px;
+        }
+
+        .reset-area button {
+            margin-right: 8px;
+            margin-top: 5px;
+        }
+
         /* ==============================
            RODAPÉ
         ============================== */
@@ -1017,7 +1059,67 @@
                 🔒 Entrar no Painel
             </button>
 
+            <br>
+            <button
+                type="button"
+                class="botao-esqueci"
+                onclick="enviarEmailRedefinicao()"
+            >
+                Esqueci minha senha
+            </button>
+
+            <div id="mensagemSenha"></div>
+
         </section>
+
+
+        <!-- REDEFINIÇÃO DE SENHA -->
+
+        <section id="resetArea" class="reset-area">
+
+            <h3>🔑 Criar nova senha</h3>
+
+            <p>
+                O link de recuperação foi aberto corretamente.
+                Digite sua nova senha abaixo.
+            </p>
+
+            <label for="novaSenha">Nova senha</label>
+
+            <input
+                type="password"
+                id="novaSenha"
+                placeholder="Digite a nova senha"
+                minlength="6"
+            >
+
+            <label for="confirmarNovaSenha">Confirmar nova senha</label>
+
+            <input
+                type="password"
+                id="confirmarNovaSenha"
+                placeholder="Digite a senha novamente"
+                minlength="6"
+            >
+
+            <button
+                type="button"
+                onclick="salvarNovaSenha()"
+            >
+                🔐 Salvar nova senha
+            </button>
+
+            <button
+                type="button"
+                onclick="fecharResetSenha()"
+            >
+                Cancelar
+            </button>
+
+            <div id="mensagemReset"></div>
+
+        </section>
+
 
 
         <!-- PAINEL ADMIN -->
@@ -1029,6 +1131,16 @@
             <p>
                 Gerencie e acompanhe os pedidos.
             </p>
+
+            <div class="acoes">
+                <button
+                    type="button"
+                    class="botao-trocar-senha"
+                    onclick="trocarSenhaLogado()"
+                >
+                    🔑 Trocar senha
+                </button>
+            </div>
 
 
             <!-- ESTATÍSTICAS -->
@@ -1687,14 +1799,242 @@ if (error) {
 
 
     /* ==============================
+       RECUPERAÇÃO / TROCA DE SENHA
+    ============================== */
+
+    async function enviarEmailRedefinicao() {
+
+        const email = prompt(
+            "Digite o e-mail do administrador para receber o link de troca de senha:"
+        );
+
+        if (!email) {
+            return;
+        }
+
+        const mensagem = document.getElementById("mensagemSenha");
+
+        mensagem.innerHTML = "";
+
+        try {
+
+            const { error } =
+                await supabaseClient.auth.resetPasswordForEmail(
+                    email.trim(),
+                    {
+                        redirectTo:
+                            window.location.origin +
+                            window.location.pathname
+                    }
+                );
+
+            if (error) {
+                console.error(error);
+
+                mensagem.innerHTML =
+                    '<div class="mensagem-erro">' +
+                    '❌ Não foi possível enviar o e-mail de recuperação.' +
+                    '<br><br>' +
+                    escapeHTML(error.message) +
+                    '</div>';
+
+                return;
+            }
+
+            mensagem.innerHTML =
+                '<div class="mensagem-sucesso">' +
+                '✅ E-mail de recuperação enviado!' +
+                '<br><br>' +
+                'Abra o link recebido no e-mail para criar uma nova senha.' +
+                '</div>';
+
+        } catch (erro) {
+
+            console.error(erro);
+
+            mensagem.innerHTML =
+                '<div class="mensagem-erro">' +
+                '❌ Ocorreu um erro ao solicitar a recuperação da senha.' +
+                '</div>';
+        }
+    }
+
+
+    async function salvarNovaSenha() {
+
+        const senha =
+            document.getElementById("novaSenha").value;
+
+        const confirmar =
+            document.getElementById("confirmarNovaSenha").value;
+
+        const mensagem =
+            document.getElementById("mensagemReset");
+
+        mensagem.innerHTML = "";
+
+        if (senha.length < 6) {
+
+            mensagem.innerHTML =
+                '<div class="mensagem-erro">' +
+                '❌ A senha deve ter pelo menos 6 caracteres.' +
+                '</div>';
+
+            return;
+        }
+
+        if (senha !== confirmar) {
+
+            mensagem.innerHTML =
+                '<div class="mensagem-erro">' +
+                '❌ As senhas não são iguais.' +
+                '</div>';
+
+            return;
+        }
+
+        const { error } =
+            await supabaseClient.auth.updateUser({
+                password: senha
+            });
+
+        if (error) {
+
+            console.error(error);
+
+            mensagem.innerHTML =
+                '<div class="mensagem-erro">' +
+                '❌ Não foi possível trocar a senha.' +
+                '<br><br>' +
+                escapeHTML(error.message) +
+                '</div>';
+
+            return;
+        }
+
+        mensagem.innerHTML =
+            '<div class="mensagem-sucesso">' +
+            '✅ Senha alterada com sucesso!' +
+            '<br><br>' +
+            'Agora você pode entrar no painel com a nova senha.' +
+            '</div>';
+
+        document.getElementById("novaSenha").value = "";
+        document.getElementById("confirmarNovaSenha").value = "";
+
+        setTimeout(function () {
+            fecharResetSenha();
+        }, 1800);
+    }
+
+
+    function fecharResetSenha() {
+
+        document.getElementById(
+            "resetArea"
+        ).style.display = "none";
+
+        document.getElementById(
+            "mensagemReset"
+        ).innerHTML = "";
+
+        document.getElementById(
+            "novaSenha"
+        ).value = "";
+
+        document.getElementById(
+            "confirmarNovaSenha"
+        ).value = "";
+    }
+
+
+    async function trocarSenhaLogado() {
+
+        const senha = prompt(
+            "Digite a nova senha (mínimo 6 caracteres):"
+        );
+
+        if (!senha) {
+            return;
+        }
+
+        if (senha.length < 6) {
+            alert("A senha deve ter pelo menos 6 caracteres.");
+            return;
+        }
+
+        const confirmar = prompt(
+            "Digite a nova senha novamente:"
+        );
+
+        if (senha !== confirmar) {
+            alert("As senhas não são iguais.");
+            return;
+        }
+
+        const { error } =
+            await supabaseClient.auth.updateUser({
+                password: senha
+            });
+
+        if (error) {
+
+            console.error(error);
+
+            alert(
+                "Não foi possível trocar a senha: " +
+                error.message
+            );
+
+            return;
+        }
+
+        alert("Senha alterada com sucesso!");
+    }
+
+
+    /* Detecta quando o usuário voltou do link de recuperação do Supabase. */
+
+    supabaseClient.auth.onAuthStateChange(
+        async function (event) {
+
+            if (event === "PASSWORD_RECOVERY") {
+
+                const area =
+                    document.getElementById("resetArea");
+
+                if (area) {
+
+                    area.style.display = "block";
+
+                    area.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+                }
+            }
+
+        }
+    );
+
+
+
+    /* ==============================
        FECHAR ADMIN
     ============================== */
 
-    function fecharPainelAdmin() {
+    async function fecharPainelAdmin() {
 
         document.getElementById(
             "painelAdmin"
         ).style.display = "none";
+
+        const { error } =
+            await supabaseClient.auth.signOut();
+
+        if (error) {
+            console.error("Erro ao sair:", error);
+        }
     }
 
 
