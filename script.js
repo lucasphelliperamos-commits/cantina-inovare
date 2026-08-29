@@ -17,10 +17,8 @@ const PRECO_ACAI = 3.50;
 // CONFIGURAÇÃO DO PAGAMENTO
 // ==========================================
 
-// Tempo para pagamento: 10 minutos
 const TEMPO_PAGAMENTO = 10 * 60;
 
-// Chave Pix do colégio
 const CHAVE_PIX =
     "ac33d16b-aa57-4f63-8a76-a6f06c7992cd";
 
@@ -53,7 +51,9 @@ function pegarPedidos() {
         );
 
         return [];
+
     }
+
 }
 
 
@@ -63,11 +63,12 @@ function salvarPedidos(pedidos) {
         "pedidos",
         JSON.stringify(pedidos)
     );
+
 }
 
 
 // ==========================================
-// QUANTIDADE DOS PRODUTOS
+// QUANTIDADES
 // ==========================================
 
 const quantidades = {
@@ -98,18 +99,25 @@ function atualizarQuantidade(produto) {
 
 function aumentar(produto) {
 
-    quantidades[produto]++;
+    if (quantidades[produto] !== undefined) {
 
-    atualizarQuantidade(produto);
+        quantidades[produto]++;
 
-    atualizarCheckbox(produto);
+        atualizarQuantidade(produto);
+
+        atualizarCheckbox(produto);
+
+    }
 
 }
 
 
 function diminuir(produto) {
 
-    if (quantidades[produto] > 0) {
+    if (
+        quantidades[produto] !== undefined &&
+        quantidades[produto] > 0
+    ) {
 
         quantidades[produto]--;
 
@@ -130,7 +138,9 @@ function atualizarCheckbox(produto) {
         );
 
     if (!checkbox) {
+
         return;
+
     }
 
     checkbox.checked =
@@ -152,9 +162,10 @@ document.addEventListener(
                 'input[name="lanche"]'
             )
         ) {
-            return;
-        }
 
+            return;
+
+        }
 
         const produto =
             evento.target.value;
@@ -162,64 +173,31 @@ document.addEventListener(
 
         if (produto === "Salgado") {
 
-            if (
-                evento.target.checked &&
-                quantidades.salgado === 0
-            ) {
-
-                quantidades.salgado = 1;
-
-            }
-
-            if (!evento.target.checked) {
-
-                quantidades.salgado = 0;
-
-            }
+            quantidades.salgado =
+                evento.target.checked ? 1 : 0;
 
             atualizarQuantidade("salgado");
+
         }
 
 
         if (produto === "Suco") {
 
-            if (
-                evento.target.checked &&
-                quantidades.suco === 0
-            ) {
-
-                quantidades.suco = 1;
-
-            }
-
-            if (!evento.target.checked) {
-
-                quantidades.suco = 0;
-
-            }
+            quantidades.suco =
+                evento.target.checked ? 1 : 0;
 
             atualizarQuantidade("suco");
+
         }
 
 
         if (produto === "Açaí") {
 
-            if (
-                evento.target.checked &&
-                quantidades.acai === 0
-            ) {
-
-                quantidades.acai = 1;
-
-            }
-
-            if (!evento.target.checked) {
-
-                quantidades.acai = 0;
-
-            }
+            quantidades.acai =
+                evento.target.checked ? 1 : 0;
 
             atualizarQuantidade("acai");
+
         }
 
     }
@@ -232,12 +210,10 @@ document.addEventListener(
 
 function calcularPedido() {
 
-    let itens = [];
+    const itens = [];
 
     let total = 0;
 
-
-    // SALGADO
 
     if (quantidades.salgado > 0) {
 
@@ -261,10 +237,9 @@ function calcularPedido() {
         });
 
         total += subtotal;
+
     }
 
-
-    // SUCO
 
     if (quantidades.suco > 0) {
 
@@ -288,10 +263,9 @@ function calcularPedido() {
         });
 
         total += subtotal;
+
     }
 
-
-    // AÇAÍ
 
     if (quantidades.acai > 0) {
 
@@ -315,6 +289,7 @@ function calcularPedido() {
         });
 
         total += subtotal;
+
     }
 
 
@@ -325,6 +300,7 @@ function calcularPedido() {
         total: total
 
     };
+
 }
 
 
@@ -332,29 +308,12 @@ function calcularPedido() {
 // FAZER PEDIDO
 // ==========================================
 
-const botaoPedido =
-    document.getElementById(
-        "fazerPedido"
-    );
-
-
-if (botaoPedido) {
-
-    botaoPedido.addEventListener(
-        "click",
-        fazerPedido
-    );
-
-}
-
-
 function fazerPedido() {
 
     const nomeInput =
         document.getElementById(
             "nomeAluno"
         );
-
 
     const turmaInput =
         document.getElementById(
@@ -374,8 +333,6 @@ function fazerPedido() {
             : "";
 
 
-    // VERIFICAR NOME
-
     if (!nome) {
 
         alert(
@@ -383,10 +340,9 @@ function fazerPedido() {
         );
 
         return;
+
     }
 
-
-    // VERIFICAR TURMA
 
     if (!turma) {
 
@@ -395,16 +351,13 @@ function fazerPedido() {
         );
 
         return;
+
     }
 
-
-    // CALCULAR
 
     const resultado =
         calcularPedido();
 
-
-    // VERIFICAR PRODUTOS
 
     if (
         resultado.itens.length === 0
@@ -415,10 +368,9 @@ function fazerPedido() {
         );
 
         return;
+
     }
 
-
-    // CRIAR PEDIDO
 
     const pedido = {
 
@@ -448,8 +400,6 @@ function fazerPedido() {
     };
 
 
-    // SALVAR PEDIDO
-
     const pedidos =
         pegarPedidos();
 
@@ -460,38 +410,65 @@ function fazerPedido() {
     salvarPedidos(pedidos);
 
 
-    // MOSTRAR PAGAMENTO
-
     mostrarPagamento(
         resultado.total,
         pedido.id
     );
 
 
-    // ATUALIZAR ADMIN
-
     atualizarEstatisticas();
 
 
     alert(
         "Pedido realizado com sucesso!\n\n" +
-
         "Aluno: " +
         nome +
-
         "\nTurma: " +
         turma +
-
         "\nTotal: R$ " +
-
         resultado.total
             .toFixed(2)
             .replace(".", ",") +
-
         "\n\nAgora faça o pagamento via Pix."
     );
 
 }
+
+
+// ==========================================
+// BOTÃO FAZER PEDIDO
+// ==========================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const botaoPedido =
+            document.getElementById(
+                "fazerPedido"
+            );
+
+
+        if (botaoPedido) {
+
+            botaoPedido.addEventListener(
+                "click",
+                fazerPedido
+            );
+
+        }
+
+
+        atualizarQuantidade("salgado");
+
+        atualizarQuantidade("suco");
+
+        atualizarQuantidade("acai");
+
+        atualizarEstatisticas();
+
+    }
+);
 
 
 // ==========================================
@@ -522,7 +499,9 @@ function mostrarPagamento(
 
 
     if (!area) {
+
         return;
+
     }
 
 
@@ -534,22 +513,12 @@ function mostrarPagamento(
 
         valor.textContent =
             "R$ " +
-
             total
                 .toFixed(2)
                 .replace(".", ",");
 
     }
 
-
-    /*
-       IMPORTANTE:
-
-       Este é um Pix de demonstração.
-       Para confirmação automática real,
-       precisaremos posteriormente
-       conectar uma API de pagamento.
-    */
 
     const codigoPix =
         CHAVE_PIX +
@@ -567,14 +536,9 @@ function mostrarPagamento(
     }
 
 
-    gerarQRCode(
-        codigoPix
-    );
+    gerarQRCode(codigoPix);
 
-
-    iniciarContador(
-        idPedido
-    );
+    iniciarContador(idPedido);
 
 
     area.scrollIntoView({
@@ -601,17 +565,11 @@ function gerarQRCode(texto) {
 
 
     if (!qr) {
+
         return;
+
     }
 
-
-    /*
-       Usamos um serviço de geração
-       de QR Code apenas para visualização.
-
-       A confirmação do pagamento real
-       será feita depois por uma API.
-    */
 
     const url =
         "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=" +
@@ -643,7 +601,9 @@ function copiarPix() {
 
 
     if (!campo) {
+
         return;
+
     }
 
 
@@ -654,42 +614,56 @@ function copiarPix() {
         );
 
         return;
+
     }
 
 
-    navigator.clipboard
-        .writeText(campo.value)
-        .then(function () {
+    if (
+        navigator.clipboard &&
+        navigator.clipboard.writeText
+    ) {
 
-            alert(
-                "Código Pix copiado!"
-            );
+        navigator.clipboard
+            .writeText(campo.value)
+            .then(function () {
 
-        })
-        .catch(function () {
+                alert(
+                    "Código Pix copiado!"
+                );
 
-            campo.select();
+            })
+            .catch(function () {
 
-            document.execCommand(
-                "copy"
-            );
+                campo.select();
 
-            alert(
-                "Código Pix copiado!"
-            );
+                document.execCommand("copy");
 
-        });
+                alert(
+                    "Código Pix copiado!"
+                );
+
+            });
+
+    } else {
+
+        campo.select();
+
+        document.execCommand("copy");
+
+        alert(
+            "Código Pix copiado!"
+        );
+
+    }
 
 }
 
 
 // ==========================================
-// CONTADOR DE PAGAMENTO
+// CONTADOR
 // ==========================================
 
-function iniciarContador(
-    idPedido
-) {
+function iniciarContador(idPedido) {
 
     if (contadorIntervalo) {
 
@@ -724,7 +698,6 @@ function iniciarContador(
                         contadorIntervalo
                     );
 
-
                     pagamentoExpirado(
                         idPedido
                     );
@@ -751,7 +724,9 @@ function atualizarContador() {
 
 
     if (!contador) {
+
         return;
+
     }
 
 
@@ -766,16 +741,9 @@ function atualizarContador() {
 
 
     contador.textContent =
-
-        String(minutos)
-            .padStart(2, "0")
-
-        +
-
+        String(minutos).padStart(2, "0") +
         ":" +
-
-        String(segundos)
-            .padStart(2, "0");
+        String(segundos).padStart(2, "0");
 
 }
 
@@ -784,9 +752,7 @@ function atualizarContador() {
 // PAGAMENTO EXPIRADO
 // ==========================================
 
-function pagamentoExpirado(
-    idPedido
-) {
+function pagamentoExpirado(idPedido) {
 
     const status =
         document.getElementById(
@@ -813,9 +779,7 @@ function pagamentoExpirado(
         pedidos.find(
             function (item) {
 
-                return (
-                    item.id === idPedido
-                );
+                return item.id === idPedido;
 
             }
         );
@@ -830,9 +794,7 @@ function pagamentoExpirado(
             "Pagamento expirado";
 
 
-        salvarPedidos(
-            pedidos
-        );
+        salvarPedidos(pedidos);
 
     }
 
@@ -843,7 +805,7 @@ function pagamentoExpirado(
 
 
 // ==========================================
-// ADMINISTRADOR
+// ABRIR ADMIN
 // ==========================================
 
 function abrirPainelAdmin() {
@@ -854,15 +816,14 @@ function abrirPainelAdmin() {
         );
 
 
-    if (
-        senha !== "1234"
-    ) {
+    if (senha !== "1234") {
 
         alert(
             "Senha incorreta."
         );
 
         return;
+
     }
 
 
@@ -873,7 +834,13 @@ function abrirPainelAdmin() {
 
 
     if (!painel) {
+
+        alert(
+            "Painel administrativo não encontrado no HTML."
+        );
+
         return;
+
     }
 
 
@@ -928,7 +895,13 @@ function mostrarPedidosAdmin() {
 
 
     if (!lista) {
+
+        console.error(
+            'Elemento com id="listaPedidos" não encontrado.'
+        );
+
         return;
+
     }
 
 
@@ -952,6 +925,7 @@ function mostrarPedidosAdmin() {
         atualizarEstatisticas();
 
         return;
+
     }
 
 
@@ -960,7 +934,6 @@ function mostrarPedidosAdmin() {
 
     pedidos.forEach(
         function (pedido) {
-
 
             const card =
                 document.createElement(
@@ -972,8 +945,7 @@ function mostrarPedidosAdmin() {
                 "pedido-admin";
 
 
-            let itensHTML =
-                "";
+            let itensHTML = "";
 
 
             pedido.itens.forEach(
@@ -982,13 +954,15 @@ function mostrarPedidosAdmin() {
                     itensHTML += `
 
                         <div>
+
                             ${item.quantidade}x
                             ${item.produto}
                             —
                             R$
-                            ${item.subtotal
+                            ${Number(item.subtotal)
                                 .toFixed(2)
                                 .replace(".", ",")}
+
                         </div>
 
                     `;
@@ -998,11 +972,8 @@ function mostrarPedidosAdmin() {
 
 
             const statusClasse =
-
                 pedido.status === "Pago"
-
                     ? "status-pago"
-
                     : "status-pendente";
 
 
@@ -1014,8 +985,7 @@ function mostrarPedidosAdmin() {
             card.innerHTML = `
 
                 <h3>
-                    Pedido de
-                    ${pedido.nome}
+                    Pedido de ${pedido.nome}
                 </h3>
 
 
@@ -1063,7 +1033,7 @@ function mostrarPedidosAdmin() {
 
                     R$
 
-                    ${pedido.total
+                    ${Number(pedido.total)
                         .toFixed(2)
                         .replace(".", ",")}
 
@@ -1117,9 +1087,7 @@ function mostrarPedidosAdmin() {
             `;
 
 
-            lista.appendChild(
-                card
-            );
+            lista.appendChild(card);
 
         }
     );
@@ -1131,12 +1099,10 @@ function mostrarPedidosAdmin() {
 
 
 // ==========================================
-// MARCAR PEDIDO COMO PAGO
+// MARCAR COMO PAGO
 // ==========================================
 
-function marcarPago(
-    id
-) {
+function marcarPago(id) {
 
     const pedidos =
         pegarPedidos();
@@ -1153,7 +1119,9 @@ function marcarPago(
 
 
     if (!pedido) {
+
         return;
+
     }
 
 
@@ -1165,9 +1133,7 @@ function marcarPago(
         "Pagamento confirmado pelo administrador";
 
 
-    salvarPedidos(
-        pedidos
-    );
+    salvarPedidos(pedidos);
 
 
     mostrarPedidosAdmin();
@@ -1179,9 +1145,7 @@ function marcarPago(
 // EXCLUIR PEDIDO
 // ==========================================
 
-function excluirPedido(
-    id
-) {
+function excluirPedido(id) {
 
     const confirmar =
         confirm(
@@ -1190,7 +1154,9 @@ function excluirPedido(
 
 
     if (!confirmar) {
+
         return;
+
     }
 
 
@@ -1208,9 +1174,7 @@ function excluirPedido(
         );
 
 
-    salvarPedidos(
-        pedidos
-    );
+    salvarPedidos(pedidos);
 
 
     mostrarPedidosAdmin();
@@ -1282,9 +1246,7 @@ function atualizarEstatisticas() {
 
                     return (
                         soma +
-                        Number(
-                            pedido.total
-                        )
+                        Number(pedido.total)
                     );
 
                 }
@@ -1324,7 +1286,6 @@ function atualizarEstatisticas() {
 
         total.textContent =
             "R$ " +
-
             valorTotalPago
                 .toFixed(2)
                 .replace(".", ",");
@@ -1332,30 +1293,3 @@ function atualizarEstatisticas() {
     }
 
 }
-
-
-// ==========================================
-// INICIALIZAÇÃO
-// ==========================================
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-        atualizarQuantidade(
-            "salgado"
-        );
-
-        atualizarQuantidade(
-            "suco"
-        );
-
-        atualizarQuantidade(
-            "acai"
-        );
-
-
-        atualizarEstatisticas();
-
-    }
-);
