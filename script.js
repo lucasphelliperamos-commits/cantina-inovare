@@ -1,997 +1,388 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-
-<head>
-    <meta charset="UTF-8">
-
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-    <title>Colégio Inovare - Pedidos da Cantina</title>
-
-    <!-- SUPABASE -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    <style>
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background: #f1f5f9;
-            color: #222;
-        }
-
-        .container {
-            width: 95%;
-            max-width: 1150px;
-            margin: 30px auto;
-        }
-
-        header {
-            background: #1764b0;
-            color: white;
-            text-align: center;
-            padding: 30px 20px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 32px;
-        }
-
-        header p {
-            margin-top: 10px;
-            font-size: 18px;
-        }
-
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-
-        h2 {
-            color: #1764b0;
-            margin-top: 0;
-        }
-
-        .dados {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        input {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 16px;
-        }
-
-        .produtos {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-
-        .produto {
-            border: 1px solid #ddd;
-            border-radius: 15px;
-            padding: 15px;
-            text-align: center;
-            background: #fff;
-        }
-
-        .produto img {
-            width: 100%;
-            height: 170px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-
-        .produto h3 {
-            color: #1764b0;
-            font-size: 22px;
-            margin: 12px 0 5px;
-        }
-
-        .preco {
-            font-size: 20px;
-            font-weight: bold;
-            margin: 8px 0;
-        }
-
-        .selecionar {
-            margin: 10px 0;
-            font-size: 17px;
-        }
-
-        .selecionar input {
-            width: auto;
-        }
-
-        .quantidade {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 15px;
-        }
-
-        .quantidade button {
-            width: 45px;
-            height: 45px;
-            border: none;
-            border-radius: 50%;
-            background: #1764b0;
-            color: white;
-            font-size: 25px;
-            cursor: pointer;
-        }
-
-        .quantidade button:hover {
-            background: #0d4e8c;
-        }
-
-        .numero {
-            font-size: 22px;
-            font-weight: bold;
-            min-width: 25px;
-        }
-
-        .pagamento {
-            background: #eaf3ff;
-            border-left: 6px solid #1764b0;
-            padding: 20px;
-            border-radius: 10px;
-        }
-
-        .pix {
-            font-size: 18px;
-            line-height: 1.7;
-        }
-
-        .total {
-            background: #1764b0;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            border-radius: 10px;
-            font-size: 28px;
-            font-weight: bold;
-            margin-top: 20px;
-        }
-
-        .botao-pedido {
-            width: 100%;
-            padding: 18px;
-            margin-top: 20px;
-            background: #1764b0;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 21px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .botao-pedido:hover {
-            background: #0d4e8c;
-        }
-
-        .botao-pedido:disabled {
-            background: #888;
-            cursor: not-allowed;
-        }
-
-        #mensagem {
-            display: none;
-            padding: 18px;
-            margin-top: 20px;
-            border-radius: 10px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .sucesso {
-            display: block !important;
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .erro {
-            display: block !important;
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .admin {
-            text-align: center;
-        }
-
-        .admin button {
-            background: #1764b0;
-            color: white;
-            border: none;
-            padding: 14px 25px;
-            border-radius: 8px;
-            font-size: 17px;
-            cursor: pointer;
-        }
-
-        footer {
-            text-align: center;
-            padding: 25px;
-            color: #666;
-        }
+// ==========================================
+// CONFIGURAÇÃO DO SUPABASE
+// ==========================================
 
-        @media (max-width: 800px) {
+const SUPABASE_URL =
+    "https://duvwemmqgdwlastmfegh.supabase.co";
 
-            .produtos {
-                grid-template-columns: 1fr;
-            }
+const SUPABASE_KEY =
+    "sb_publishable_vlsLJ9-0Jrij35lSz3cigQ_entN7J8c";
 
-            .dados {
-                grid-template-columns: 1fr;
-            }
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
-            header h1 {
-                font-size: 25px;
-            }
 
-        }
-
-    </style>
-</head>
+// ==========================================
+// PREÇOS
+// ==========================================
 
-<body>
+const PRECO_SALGADO = 6.00;
+const PRECO_SUCO = 3.50;
+const PRECO_ACAI = 3.50;
 
-<div class="container">
 
-    <!-- CABEÇALHO -->
+// ==========================================
+// QUANTIDADES
+// ==========================================
 
-    <header>
+let quantidades = {
+    salgado: 1,
+    suco: 1,
+    acai: 1
+};
 
-        <h1>🍴 Colégio Inovare</h1>
 
-        <p>Sistema de Pedidos da Cantina</p>
+// ==========================================
+// ALTERAR QUANTIDADE
+// ==========================================
 
-    </header>
+function alterarQuantidade(produto, valor) {
 
+    quantidades[produto] += valor;
 
-    <!-- DADOS DO ALUNO -->
+    if (quantidades[produto] < 1) {
+        quantidades[produto] = 1;
+    }
 
-    <div class="card">
+    if (produto === "salgado") {
+        document.getElementById("qtdSalgado").textContent =
+            quantidades.salgado;
+    }
 
-        <h2>👤 Dados do aluno</h2>
+    if (produto === "suco") {
+        document.getElementById("qtdSuco").textContent =
+            quantidades.suco;
+    }
 
-        <div class="dados">
+    if (produto === "acai") {
+        document.getElementById("qtdAcai").textContent =
+            quantidades.acai;
+    }
 
-            <input
-                type="text"
-                id="nome"
-                placeholder="Nome do aluno"
-            >
+    atualizarTotal();
+}
 
-            <input
-                type="text"
-                id="turma"
-                placeholder="Turma"
-            >
 
-        </div>
+// ==========================================
+// CALCULAR TOTAL
+// ==========================================
 
-    </div>
+function calcularTotal() {
 
+    let total = 0;
 
-    <!-- PRODUTOS -->
+    if (document.getElementById("checkSalgado").checked) {
+        total += PRECO_SALGADO * quantidades.salgado;
+    }
 
-    <div class="card">
+    if (document.getElementById("checkSuco").checked) {
+        total += PRECO_SUCO * quantidades.suco;
+    }
 
-        <h2>🍔 Escolha seus produtos</h2>
+    if (document.getElementById("checkAcai").checked) {
+        total += PRECO_ACAI * quantidades.acai;
+    }
 
-        <div class="produtos">
+    return total;
+}
 
 
-            <!-- SALGADO -->
+function atualizarTotal() {
 
-            <div class="produto">
+    const total = calcularTotal();
 
-                <img
-                    src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80"
-                    alt="Salgado"
-                >
+    document.getElementById("total").textContent =
+        total.toFixed(2).replace(".", ",");
+}
 
-                <h3>🥪 Salgado</h3>
 
-                <div class="preco">
-                    R$ 6,00
-                </div>
+// ==========================================
+// FAZER PEDIDO
+// ==========================================
 
-                <div class="selecionar">
+async function fazerPedido() {
 
-                    <label>
+    const nome =
+        document.getElementById("nome").value.trim();
 
-                        <input
-                            type="checkbox"
-                            id="checkSalgado"
-                            onchange="atualizarTotal()"
-                        >
+    const turma =
+        document.getElementById("turma").value.trim();
 
-                        Selecionar
+    const salgadoSelecionado =
+        document.getElementById("checkSalgado").checked;
 
-                    </label>
+    const sucoSelecionado =
+        document.getElementById("checkSuco").checked;
 
-                </div>
+    const acaiSelecionado =
+        document.getElementById("checkAcai").checked;
 
-                <div class="quantidade">
-
-                    <button onclick="alterarQuantidade('salgado', -1)">
-                        −
-                    </button>
-
-                    <span
-                        class="numero"
-                        id="qtdSalgado"
-                    >
-                        1
-                    </span>
-
-                    <button onclick="alterarQuantidade('salgado', 1)">
-                        +
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <!-- SUCO -->
-
-            <div class="produto">
-
-                <img
-                    src="https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=800&q=80"
-                    alt="Suco"
-                >
-
-                <h3>🧃 Suco</h3>
-
-                <div class="preco">
-                    R$ 3,50
-                </div>
-
-                <div class="selecionar">
-
-                    <label>
-
-                        <input
-                            type="checkbox"
-                            id="checkSuco"
-                            onchange="atualizarTotal()"
-                        >
-
-                        Selecionar
-
-                    </label>
-
-                </div>
-
-                <div class="quantidade">
-
-                    <button onclick="alterarQuantidade('suco', -1)">
-                        −
-                    </button>
-
-                    <span
-                        class="numero"
-                        id="qtdSuco"
-                    >
-                        1
-                    </span>
-
-                    <button onclick="alterarQuantidade('suco', 1)">
-                        +
-                    </button>
-
-                </div>
-
-            </div>
-
-
-            <!-- AÇAÍ -->
-
-            <div class="produto">
-
-                <img
-                    src="https://images.unsplash.com/photo-1590301157890-4810ed352733?auto=format&fit=crop&w=800&q=80"
-                    alt="Açaí"
-                >
-
-                <h3>🍧 Açaí</h3>
-
-                <div class="preco">
-                    R$ 3,50
-                </div>
-
-                <div class="selecionar">
-
-                    <label>
-
-                        <input
-                            type="checkbox"
-                            id="checkAcai"
-                            onchange="atualizarTotal()"
-                        >
-
-                        Selecionar
-
-                    </label>
-
-                </div>
-
-                <div class="quantidade">
-
-                    <button onclick="alterarQuantidade('acai', -1)">
-                        −
-                    </button>
-
-                    <span
-                        class="numero"
-                        id="qtdAcai"
-                    >
-                        1
-                    </span>
-
-                    <button onclick="alterarQuantidade('acai', 1)">
-                        +
-                    </button>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <!-- TOTAL -->
-
-        <div class="total">
-
-            Total: R$
-            <span id="total">
-                0,00
-            </span>
-
-        </div>
-
-    </div>
-
-
-    <!-- PAGAMENTO -->
-
-    <div class="card">
-
-        <h2>💳 Pagamento</h2>
-
-        <div class="pagamento">
-
-            <div class="pix">
-
-                <h3>PIX</h3>
-
-                <p>
-                    Pagamento somente via Pix.
-                </p>
-
-                <hr>
-
-                <strong>Chave Pix:</strong>
-
-                <br>
-
-                ac33d16b-aa57-4f63-8a76-a6f06c7992cd
-
-                <br><br>
-
-                <strong>Nome:</strong>
-
-                <br>
-
-                Mathews Phillipy
-
-            </div>
-
-        </div>
-
-
-        <!-- BOTÃO -->
-
-        <button
-            class="botao-pedido"
-            id="botaoPedido"
-            onclick="fazerPedido()"
-        >
-
-            🛒 Fazer Pedido
-
-        </button>
-
-
-        <div id="mensagem"></div>
-
-    </div>
-
-
-    <!-- ADMIN -->
-
-    <div class="card admin">
-
-        <h2>🔐 Área do Administrador</h2>
-
-        <p>
-            Acesso exclusivo para administração dos pedidos.
-        </p>
-
-        <button onclick="abrirAdmin()">
-            🔐 Entrar no Painel
-        </button>
-
-    </div>
-
-
-    <footer>
-
-        © 2026 Colégio Inovare - Sistema da Cantina
-
-    </footer>
-
-</div>
-
-
-<script>
 
     // ==========================================
-    // CONFIGURAÇÃO SUPABASE
+    // VALIDAÇÕES
     // ==========================================
 
-    const SUPABASE_URL =
-        "https://duvwemmqgdwlastmfegh.supabase.co";
+    if (!nome) {
 
-    const SUPABASE_KEY =
-        "sb_publishable_vlsLJ9-0Jrij35lSz3cigQ_entN7J8c";
+        mostrarMensagem(
+            "Digite o nome do aluno.",
+            false
+        );
+
+        document.getElementById("nome").focus();
+
+        return;
+    }
 
 
-    const supabaseClient =
-        window.supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_KEY
+    if (!turma) {
+
+        mostrarMensagem(
+            "Digite a turma.",
+            false
+        );
+
+        document.getElementById("turma").focus();
+
+        return;
+    }
+
+
+    if (
+        !salgadoSelecionado &&
+        !sucoSelecionado &&
+        !acaiSelecionado
+    ) {
+
+        mostrarMensagem(
+            "Selecione pelo menos um produto.",
+            false
+        );
+
+        return;
+    }
+
+
+    // ==========================================
+    // TOTAL
+    // ==========================================
+
+    const total = calcularTotal();
+
+
+    // ==========================================
+    // BOTÃO
+    // ==========================================
+
+    const botao =
+        document.getElementById("botaoPedido");
+
+    botao.disabled = true;
+
+    botao.textContent =
+        "⏳ Enviando pedido...";
+
+
+    try {
+
+        // ==========================================
+        // ENVIAR PARA O SUPABASE
+        // ==========================================
+
+        const resultado =
+            await supabaseClient
+                .from("pedidos")
+                .insert({
+
+                    nome: nome,
+
+                    turma: turma,
+
+                    salgado:
+                        salgadoSelecionado
+                            ? quantidades.salgado
+                            : 0,
+
+                    suco:
+                        sucoSelecionado
+                            ? quantidades.suco
+                            : 0,
+
+                    acai:
+                        acaiSelecionado
+                            ? quantidades.acai
+                            : 0,
+
+                    total: total
+
+                });
+
+
+        if (resultado.error) {
+
+            console.error(
+                "Erro do Supabase:",
+                resultado.error
+            );
+
+            throw resultado.error;
+        }
+
+
+        // ==========================================
+        // SUCESSO
+        // ==========================================
+
+        mostrarMensagem(
+            "✅ Pedido enviado com sucesso!",
+            true
         );
 
 
-    // ==========================================
-    // PREÇOS
-    // ==========================================
+        // ==========================================
+        // LIMPAR FORMULÁRIO
+        // ==========================================
 
-    const PRECO_SALGADO = 6.00;
+        document.getElementById("nome").value = "";
 
-    const PRECO_SUCO = 3.50;
+        document.getElementById("turma").value = "";
 
-    const PRECO_ACAI = 3.50;
+        document.getElementById("checkSalgado").checked =
+            false;
 
+        document.getElementById("checkSuco").checked =
+            false;
 
-    // ==========================================
-    // QUANTIDADES
-    // ==========================================
-
-    let quantidades = {
-
-        salgado: 1,
-
-        suco: 1,
-
-        acai: 1
-
-    };
+        document.getElementById("checkAcai").checked =
+            false;
 
 
-    // ==========================================
-    // ALTERAR QUANTIDADE
-    // ==========================================
+        quantidades = {
 
-    function alterarQuantidade(produto, valor) {
+            salgado: 1,
 
-        quantidades[produto] += valor;
+            suco: 1,
 
+            acai: 1
 
-        if (quantidades[produto] < 1) {
-
-            quantidades[produto] = 1;
-
-        }
+        };
 
 
-        if (produto === "salgado") {
+        document.getElementById("qtdSalgado").textContent =
+            "1";
 
-            document.getElementById("qtdSalgado").textContent =
-                quantidades[produto];
+        document.getElementById("qtdSuco").textContent =
+            "1";
 
-        }
-
-
-        if (produto === "suco") {
-
-            document.getElementById("qtdSuco").textContent =
-                quantidades[produto];
-
-        }
-
-
-        if (produto === "acai") {
-
-            document.getElementById("qtdAcai").textContent =
-                quantidades[produto];
-
-        }
+        document.getElementById("qtdAcai").textContent =
+            "1";
 
 
         atualizarTotal();
 
-    }
 
+    } catch (erro) {
 
-    // ==========================================
-    // CALCULAR TOTAL
-    // ==========================================
+        console.error(
+            "Não foi possível enviar:",
+            erro
+        );
 
-    function atualizarTotal() {
 
-        let total = 0;
+        let mensagemErro =
+            "❌ Não foi possível enviar o pedido.";
 
 
-        const salgadoSelecionado =
-            document.getElementById("checkSalgado").checked;
-
-
-        const sucoSelecionado =
-            document.getElementById("checkSuco").checked;
-
-
-        const acaiSelecionado =
-            document.getElementById("checkAcai").checked;
-
-
-        if (salgadoSelecionado) {
-
-            total +=
-                PRECO_SALGADO *
-                quantidades.salgado;
-
-        }
-
-
-        if (sucoSelecionado) {
-
-            total +=
-                PRECO_SUCO *
-                quantidades.suco;
-
-        }
-
-
-        if (acaiSelecionado) {
-
-            total +=
-                PRECO_ACAI *
-                quantidades.acai;
-
-        }
-
-
-        document.getElementById("total").textContent =
-            total.toFixed(2).replace(".", ",");
-
-    }
-
-
-    // ==========================================
-    // FAZER PEDIDO
-    // ==========================================
-
-    async function fazerPedido() {
-
-        const nome =
-            document.getElementById("nome").value.trim();
-
-
-        const turma =
-            document.getElementById("turma").value.trim();
-
-
-        const salgadoSelecionado =
-            document.getElementById("checkSalgado").checked;
-
-
-        const sucoSelecionado =
-            document.getElementById("checkSuco").checked;
-
-
-        const acaiSelecionado =
-            document.getElementById("checkAcai").checked;
-
-
-        // VERIFICAR NOME
-
-        if (!nome) {
-
-            mostrarMensagem(
-                "Digite o nome do aluno.",
-                false
-            );
-
-            return;
-
-        }
-
-
-        // VERIFICAR TURMA
-
-        if (!turma) {
-
-            mostrarMensagem(
-                "Digite a turma.",
-                false
-            );
-
-            return;
-
-        }
-
-
-        // VERIFICAR PRODUTO
-
-        if (
-            !salgadoSelecionado &&
-            !sucoSelecionado &&
-            !acaiSelecionado
-        ) {
-
-            mostrarMensagem(
-                "Selecione pelo menos um produto.",
-                false
-            );
-
-            return;
-
-        }
-
-
-        // CALCULAR TOTAL
-
-        let total = 0;
-
-
-        if (salgadoSelecionado) {
-
-            total +=
-                PRECO_SALGADO *
-                quantidades.salgado;
-
-        }
-
-
-        if (sucoSelecionado) {
-
-            total +=
-                PRECO_SUCO *
-                quantidades.suco;
-
-        }
-
-
-        if (acaiSelecionado) {
-
-            total +=
-                PRECO_ACAI *
-                quantidades.acai;
-
-        }
-
-
-        const botao =
-            document.getElementById("botaoPedido");
-
-
-        botao.disabled = true;
-
-        botao.textContent =
-            "⏳ Enviando pedido...";
-
-
-        try {
-
-
-            // ==========================================
-            // ENVIAR PARA SUPABASE
-            // ==========================================
-
-            const { data, error } =
-                await supabaseClient
-                    .from("pedidos")
-                    .insert([{
-
-                        nome: nome,
-
-                        turma: turma,
-
-                        salgado:
-                            salgadoSelecionado
-                                ? quantidades.salgado
-                                : 0,
-
-                        suco:
-                            sucoSelecionado
-                                ? quantidades.suco
-                                : 0,
-
-                        acai:
-                            acaiSelecionado
-                                ? quantidades.acai
-                                : 0,
-
-                        total: total
-
-                    }]);
-
-
-            if (error) {
-
-                console.error(error);
-
-                throw error;
-
-            }
-
-
-            mostrarMensagem(
-                "✅ Pedido enviado com sucesso!",
-                true
-            );
-
-
-            // LIMPAR FORMULÁRIO
-
-            document.getElementById("nome").value = "";
-
-            document.getElementById("turma").value = "";
-
-
-            document.getElementById("checkSalgado").checked =
-                false;
-
-            document.getElementById("checkSuco").checked =
-                false;
-
-            document.getElementById("checkAcai").checked =
-                false;
-
-
-            quantidades.salgado = 1;
-
-            quantidades.suco = 1;
-
-            quantidades.acai = 1;
-
-
-            document.getElementById("qtdSalgado").textContent =
-                "1";
-
-            document.getElementById("qtdSuco").textContent =
-                "1";
-
-            document.getElementById("qtdAcai").textContent =
-                "1";
-
-
-            atualizarTotal();
-
-
-        } catch (erro) {
-
+        if (erro && erro.message) {
 
             console.error(
-                "Erro ao enviar pedido:",
-                erro
-            );
-
-
-            mostrarMensagem(
-                "❌ Não foi possível enviar o pedido. Verifique a configuração do Supabase.",
-                false
-            );
-
-
-        } finally {
-
-            botao.disabled = false;
-
-            botao.textContent =
-                "🛒 Fazer Pedido";
-
-        }
-
-    }
-
-
-    // ==========================================
-    // MENSAGEM
-    // ==========================================
-
-    function mostrarMensagem(texto, sucesso) {
-
-        const mensagem =
-            document.getElementById("mensagem");
-
-
-        mensagem.textContent = texto;
-
-
-        mensagem.className =
-            sucesso
-                ? "sucesso"
-                : "erro";
-
-
-    }
-
-
-    // ==========================================
-    // ADMINISTRADOR
-    // ==========================================
-
-    function abrirAdmin() {
-
-        const senha =
-            prompt(
-                "Digite a senha do administrador:"
-            );
-
-
-        if (senha === "1234") {
-
-            window.location.href =
-                "admin.html";
-
-        } else {
-
-            alert(
-                "❌ Senha incorreta."
+                "Mensagem:",
+                erro.message
             );
 
         }
 
+
+        mostrarMensagem(
+            mensagemErro,
+            false
+        );
+
+
+    } finally {
+
+        botao.disabled = false;
+
+        botao.textContent =
+            "🛒 Fazer Pedido";
+
+    }
+}
+
+
+// ==========================================
+// MOSTRAR MENSAGEM
+// ==========================================
+
+function mostrarMensagem(texto, sucesso) {
+
+    const mensagem =
+        document.getElementById("mensagem");
+
+
+    mensagem.textContent = texto;
+
+
+    mensagem.className =
+        sucesso
+            ? "sucesso"
+            : "erro";
+
+
+    mensagem.style.display = "block";
+}
+
+
+// ==========================================
+// PAINEL DO ADMINISTRADOR
+// ==========================================
+
+function abrirAdmin() {
+
+    const senha =
+        prompt(
+            "Digite a senha do administrador:"
+        );
+
+
+    if (senha === "1234") {
+
+        window.location.href =
+            "admin.html";
+
+    } else {
+
+        alert(
+            "❌ Senha incorreta."
+        );
+
     }
 
+}
 
-    // ==========================================
-    // INICIAR
-    // ==========================================
 
-    atualizarTotal();
+// ==========================================
+// INICIAR
+// ==========================================
 
-</script>
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-</body>
+        atualizarTotal();
 
-</html>
+    }
+);
