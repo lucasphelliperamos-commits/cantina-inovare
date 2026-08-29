@@ -1650,18 +1650,24 @@
 
     async function abrirPainelAdmin() {
 
-        const senha =
-            prompt(
-                "Digite a senha do administrador:"
-            );
+       const email = prompt("Digite o e-mail do administrador:");
+const senha = prompt("Digite a senha do administrador:");
 
+if (!email || !senha) {
+    alert("Digite o e-mail e a senha.");
+    return;
+}
 
-        if (senha !== "1234") {
+const { data, error } = await supabaseClient.auth.signInWithPassword({
+    email: email,
+    password: senha
+});
 
-            alert("Senha incorreta.");
-
-            return;
-        }
+if (error) {
+    console.error(error);
+    alert("E-mail ou senha incorretos.");
+    return;
+}
 
 
         document.getElementById(
