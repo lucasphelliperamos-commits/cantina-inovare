@@ -6,7 +6,7 @@ const SUPABASE_URL =
     "https://duvwemmqgdwlastmfegh.supabase.co";
 
 const SUPABASE_KEY =
-    "sb_publishable_vlsLJ9-0Jrij35lSz3cigQ_entN7J8c";
+    "SUA_CHAVE_PUBLICÁVEL_AQUI";
 
 const supabaseClient =
     window.supabase.createClient(
@@ -90,6 +90,10 @@ function calcularTotal() {
 }
 
 
+// ==========================================
+// ATUALIZAR TOTAL
+// ==========================================
+
 function atualizarTotal() {
 
     const total = calcularTotal();
@@ -167,6 +171,52 @@ async function fazerPedido() {
 
 
     // ==========================================
+    // MONTAR ITENS DO PEDIDO
+    // ==========================================
+
+    const itens = [];
+
+
+    if (salgadoSelecionado) {
+
+        itens.push({
+            produto: "Salgado",
+            quantidade: quantidades.salgado,
+            preco: PRECO_SALGADO,
+            subtotal:
+                PRECO_SALGADO * quantidades.salgado
+        });
+
+    }
+
+
+    if (sucoSelecionado) {
+
+        itens.push({
+            produto: "Suco",
+            quantidade: quantidades.suco,
+            preco: PRECO_SUCO,
+            subtotal:
+                PRECO_SUCO * quantidades.suco
+        });
+
+    }
+
+
+    if (acaiSelecionado) {
+
+        itens.push({
+            produto: "Açaí",
+            quantidade: quantidades.acai,
+            preco: PRECO_ACAI,
+            subtotal:
+                PRECO_ACAI * quantidades.acai
+        });
+
+    }
+
+
+    // ==========================================
     // TOTAL
     // ==========================================
 
@@ -201,25 +251,16 @@ async function fazerPedido() {
 
                     turma: turma,
 
-                    salgado:
-                        salgadoSelecionado
-                            ? quantidades.salgado
-                            : 0,
-
-                    suco:
-                        sucoSelecionado
-                            ? quantidades.suco
-                            : 0,
-
-                    acai:
-                        acaiSelecionado
-                            ? quantidades.acai
-                            : 0,
+                    itens: itens,
 
                     total: total
 
                 });
 
+
+        // ==========================================
+        // VERIFICAR ERRO
+        // ==========================================
 
         if (resultado.error) {
 
@@ -292,22 +333,8 @@ async function fazerPedido() {
         );
 
 
-        let mensagemErro =
-            "❌ Não foi possível enviar o pedido.";
-
-
-        if (erro && erro.message) {
-
-            console.error(
-                "Mensagem:",
-                erro.message
-            );
-
-        }
-
-
         mostrarMensagem(
-            mensagemErro,
+            "❌ Não foi possível enviar o pedido. Verifique o Supabase.",
             false
         );
 
@@ -332,15 +359,12 @@ function mostrarMensagem(texto, sucesso) {
     const mensagem =
         document.getElementById("mensagem");
 
-
     mensagem.textContent = texto;
-
 
     mensagem.className =
         sucesso
             ? "sucesso"
             : "erro";
-
 
     mensagem.style.display = "block";
 }
