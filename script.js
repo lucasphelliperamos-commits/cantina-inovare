@@ -242,19 +242,14 @@ async function fazerPedido() {
         // ENVIAR PARA O SUPABASE
         // ==========================================
 
-        const resultado =
+        const { data, error } =
             await supabaseClient
                 .from("pedidos")
                 .insert({
-
                     nome: nome,
-
                     turma: turma,
-
                     itens: itens,
-
                     total: total
-
                 });
 
 
@@ -262,20 +257,45 @@ async function fazerPedido() {
         // VERIFICAR ERRO
         // ==========================================
 
-        if (resultado.error) {
+        if (error) {
 
             console.error(
-                "Erro do Supabase:",
-                resultado.error
+                "ERRO COMPLETO DO SUPABASE:",
+                error
             );
 
-            throw resultado.error;
+            console.error(
+                "Código:",
+                error.code
+            );
+
+            console.error(
+                "Mensagem:",
+                error.message
+            );
+
+            console.error(
+                "Detalhes:",
+                error.details
+            );
+
+            console.error(
+                "Hint:",
+                error.hint
+            );
+
+            throw error;
         }
 
 
         // ==========================================
         // SUCESSO
         // ==========================================
+
+        console.log(
+            "Pedido enviado:",
+            data
+        );
 
         mostrarMensagem(
             "✅ Pedido enviado com sucesso!",
@@ -302,13 +322,9 @@ async function fazerPedido() {
 
 
         quantidades = {
-
             salgado: 1,
-
             suco: 1,
-
             acai: 1
-
         };
 
 
@@ -328,16 +344,28 @@ async function fazerPedido() {
     } catch (erro) {
 
         console.error(
-            "Não foi possível enviar:",
+            "NÃO FOI POSSÍVEL ENVIAR O PEDIDO:",
             erro
         );
 
 
+        // ==========================================
+        // MOSTRAR ERRO REAL
+        // ==========================================
+
+        let mensagemErro =
+            "❌ Não foi possível enviar o pedido.";
+
+        if (erro && erro.message) {
+            mensagemErro +=
+                " " + erro.message;
+        }
+
+
         mostrarMensagem(
-            "❌ Não foi possível enviar o pedido. Verifique o Supabase.",
+            mensagemErro,
             false
         );
-
 
     } finally {
 
