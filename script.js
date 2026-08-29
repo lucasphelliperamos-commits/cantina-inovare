@@ -1093,12 +1093,25 @@ function mostrarPedidosAdmin() {
 
                 </p>
 
-                <button
-                    type="button"
-                    onclick="marcarPago(${pedido.id})"
-                >
-                    🟢 Marcar como pago
-                </button>
+               ${
+    pedido.status !== "Pago"
+        ? `
+            <button
+                type="button"
+                onclick="marcarPago(${pedido.id})"
+            >
+                🟢 Marcar como pago
+            </button>
+        `
+        : `
+            <button
+                type="button"
+                disabled
+            >
+                ✅ Pagamento confirmado
+            </button>
+        `
+}
 
                 <button
                     type="button"
