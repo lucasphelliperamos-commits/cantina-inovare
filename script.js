@@ -242,7 +242,7 @@ async function fazerPedido() {
         // ENVIAR PARA O SUPABASE
         // ==========================================
 
-        const { data, error } =
+        const resposta =
             await supabaseClient
                 .from("pedidos")
                 .insert({
@@ -254,37 +254,62 @@ async function fazerPedido() {
 
 
         // ==========================================
+        // MOSTRAR RESPOSTA COMPLETA
+        // ==========================================
+
+        console.log(
+            "========== RESPOSTA DO SUPABASE =========="
+        );
+
+        console.log(
+            "Resposta completa:",
+            resposta
+        );
+
+        console.log(
+            "Dados:",
+            resposta.data
+        );
+
+        console.log(
+            "Erro:",
+            resposta.error
+        );
+
+
+        // ==========================================
         // VERIFICAR ERRO
         // ==========================================
 
-        if (error) {
+        if (resposta.error) {
+
+            const erro = resposta.error;
 
             console.error(
-                "ERRO COMPLETO DO SUPABASE:",
-                error
+                "========== ERRO DO SUPABASE =========="
             );
 
             console.error(
                 "Código:",
-                error.code
+                erro.code || "Não informado"
             );
 
             console.error(
                 "Mensagem:",
-                error.message
+                erro.message || "Não informada"
             );
 
             console.error(
                 "Detalhes:",
-                error.details
+                erro.details || "Não informado"
             );
 
             console.error(
                 "Hint:",
-                error.hint
+                erro.hint || "Não informado"
             );
 
-            throw error;
+            throw erro;
         }
 
 
@@ -293,8 +318,7 @@ async function fazerPedido() {
         // ==========================================
 
         console.log(
-            "Pedido enviado:",
-            data
+            "========== PEDIDO ENVIADO COM SUCESSO =========="
         );
 
         mostrarMensagem(
@@ -344,21 +368,28 @@ async function fazerPedido() {
     } catch (erro) {
 
         console.error(
-            "NÃO FOI POSSÍVEL ENVIAR O PEDIDO:",
+            "========== NÃO FOI POSSÍVEL ENVIAR =========="
+        );
+
+        console.error(
+            "Erro final:",
             erro
         );
 
 
         // ==========================================
-        // MOSTRAR ERRO REAL
+        // MOSTRAR ERRO REAL NA TELA
         // ==========================================
 
         let mensagemErro =
             "❌ Não foi possível enviar o pedido.";
 
+
         if (erro && erro.message) {
+
             mensagemErro +=
                 " " + erro.message;
+
         }
 
 
