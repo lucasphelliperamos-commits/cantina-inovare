@@ -7,7 +7,11 @@
 
     <title>Painel do Administrador - Cantina Inovare</title>
 
+    <!-- SUPABASE CARREGADO ANTES DO NOSSO JAVASCRIPT -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
+
         body {
             font-family: Arial, sans-serif;
             background: #f4f7fb;
@@ -39,6 +43,11 @@
             padding: 10px 16px;
             cursor: pointer;
             font-weight: bold;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         .atualizar {
@@ -100,21 +109,6 @@
             background: #f5f9ff;
         }
 
-        .pendente {
-            color: #d97706;
-            font-weight: bold;
-        }
-
-        .pago {
-            color: #16803c;
-            font-weight: bold;
-        }
-
-        .cancelado {
-            color: #d00000;
-            font-weight: bold;
-        }
-
         .status-select {
             padding: 7px;
             border-radius: 6px;
@@ -126,6 +120,7 @@
             padding: 30px;
             color: #666;
         }
+
     </style>
 </head>
 
@@ -140,18 +135,27 @@
         <strong>📋 Pedidos da Cantina</strong>
 
         <div>
-            <button class="atualizar" onclick="carregarPedidos()">
+
+            <button
+                class="atualizar"
+                id="botaoAtualizar"
+                onclick="carregarPedidos()">
                 🔄 Atualizar
             </button>
 
-            <button class="sair" onclick="sair()">
+            <button
+                class="sair"
+                onclick="sair()">
                 🚪 Sair
             </button>
+
         </div>
 
     </div>
 
+
     <div id="mensagem" class="mensagem"></div>
+
 
     <div class="tabela-container">
 
@@ -172,12 +176,19 @@
 
             </thead>
 
+
             <tbody id="listaPedidos">
 
                 <tr>
-                    <td colspan="8" class="sem-pedidos">
+
+                    <td
+                        colspan="8"
+                        class="sem-pedidos">
+
                         ⏳ Carregando pedidos...
+
                     </td>
+
                 </tr>
 
             </tbody>
@@ -191,11 +202,16 @@
 
 <script>
 
+// ==========================================
+// CONFIGURAÇÃO DO SUPABASE
+// ==========================================
+
 const SUPABASE_URL =
     "https://duvwemmqgdwlastmfegh.supabase.co";
 
 const SUPABASE_KEY =
     "sb_publishable_vlsLJ9-0Jrij35lSz3cigQ_entN7J8c";
+
 
 const supabaseClient =
     window.supabase.createClient(
@@ -218,6 +234,8 @@ function mostrarMensagem(texto, tipo) {
     mensagem.className =
         "mensagem " + tipo;
 
+    mensagem.style.display = "block";
+
 }
 
 
@@ -230,6 +248,16 @@ async function carregarPedidos() {
     const lista =
         document.getElementById("listaPedidos");
 
+    const botaoAtualizar =
+        document.getElementById("botaoAtualizar");
+
+
+    botaoAtualizar.disabled = true;
+
+    botaoAtualizar.textContent =
+        "⏳ Carregando...";
+
+
     lista.innerHTML = `
         <tr>
             <td colspan="8" class="sem-pedidos">
@@ -239,166 +267,256 @@ async function carregarPedidos() {
     `;
 
 
-    const { data, error } =
-        await supabaseClient
-            .from("pedidos")
-            .select("*")
-            .order("criado_em", {
-                ascending: false
-            });
+    try {
+
+        const { data, error } =
+            await supabaseClient
+                .from("pedidos")
+                .select("*")
+                .order("criado_em", {
+                    ascending: false
+                });
 
 
-    if (error) {
+        if (error) {
 
-        console.error(error);
+            console.error(
+                "Erro Supabase:",
+                error
+            );
+
+            throw error;
+        }
+
+
+        // ==================================
+        // NENHUM PEDIDO
+        // ==================================
+
+        if (!data || data.length === 0) {
+
+            lista.innerHTML = `
+                <tr>
+                    <td
+                        colspan="8"
+                        class="sem-pedidos">
+
+                        📭 Nenhum pedido encontrado.
+
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+
+        // ==================================
+        // LIMPAR TABELA
+        // ==================================
+
+        lista.innerHTML = "";
+
+
+        // ==================================
+        // MOSTRAR PEDIDOS
+        // ==================================
+
+        data.forEach(pedido => {
+
+            // ------------------------------
+            // ITENS
+            // ------------------------------
+
+            let itensTexto = "";
+
+
+            if (Array.isArray(pedido.itens)) {
+
+                itensTexto =
+                    pedido.itens
+                        .map(item => {
+
+                            return `${item.quantidade}x ${item.produto}`;
+
+                        })
+                        .join(", ");
+
+            } else {
+
+                itensTexto =
+                    pedido.itens || "";
+
+            }
+
+
+            // ------------------------------
+            // DATA
+            // ------------------------------
+
+            let dataFormatada = "";
+
+
+            if (pedido.criado_em) {
+
+                dataFormatada =
+                    new Date(
+                        pedido.criado_em
+                    ).toLocaleString(
+                        "pt-BR"
+                    );
+
+            }
+
+
+            // ------------------------------
+            // STATUS
+            // ------------------------------
+
+            const status =
+                pedido.status || "Pendente";
+
+
+            // ------------------------------
+            // LINHA
+            // ------------------------------
+
+            const linha =
+                document.createElement("tr");
+
+
+            linha.innerHTML = `
+
+                <td>
+                    ${pedido.id}
+                </td>
+
+
+                <td>
+                    <strong>
+                        ${pedido.nome || ""}
+                    </strong>
+                </td>
+
+
+                <td>
+                    ${pedido.turma || ""}
+                </td>
+
+
+                <td>
+                    ${itensTexto}
+                </td>
+
+
+                <td>
+                    <strong>
+                        R$ ${Number(
+                            pedido.total || 0
+                        )
+                        .toFixed(2)
+                        .replace(".", ",")}
+                    </strong>
+                </td>
+
+
+                <td>
+                    ${pedido.pagamento ||
+                    "Aguardando pagamento"}
+                </td>
+
+
+                <td>
+
+                    <select
+                        class="status-select"
+                        onchange="
+                            alterarStatus(
+                                ${pedido.id},
+                                this.value
+                            )
+                        "
+                    >
+
+                        <option
+                            value="Pendente"
+                            ${status === "Pendente"
+                                ? "selected"
+                                : ""}>
+                            Pendente
+                        </option>
+
+
+                        <option
+                            value="Pago"
+                            ${status === "Pago"
+                                ? "selected"
+                                : ""}>
+                            Pago
+                        </option>
+
+
+                        <option
+                            value="Cancelado"
+                            ${status === "Cancelado"
+                                ? "selected"
+                                : ""}>
+                            Cancelado
+                        </option>
+
+                    </select>
+
+                </td>
+
+
+                <td>
+                    ${dataFormatada}
+                </td>
+
+            `;
+
+
+            lista.appendChild(linha);
+
+        });
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro final:",
+            erro
+        );
+
 
         mostrarMensagem(
             "❌ Erro ao carregar pedidos: " +
-            error.message,
+            (erro.message || "Erro desconhecido"),
             "erro"
         );
 
+
         lista.innerHTML = `
             <tr>
-                <td colspan="8" class="sem-pedidos">
+                <td
+                    colspan="8"
+                    class="sem-pedidos">
+
                     ❌ Não foi possível carregar os pedidos.
+
                 </td>
             </tr>
         `;
 
-        return;
+
+    } finally {
+
+        botaoAtualizar.disabled = false;
+
+        botaoAtualizar.textContent =
+            "🔄 Atualizar";
+
     }
-
-
-    if (!data || data.length === 0) {
-
-        lista.innerHTML = `
-            <tr>
-                <td colspan="8" class="sem-pedidos">
-                    📭 Nenhum pedido encontrado.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-
-    lista.innerHTML = "";
-
-
-    data.forEach(pedido => {
-
-        let itensTexto = "";
-
-
-        if (Array.isArray(pedido.itens)) {
-
-            itensTexto =
-                pedido.itens
-                    .map(item =>
-                        `${item.quantidade}x ${item.produto}`
-                    )
-                    .join(", ");
-
-        } else {
-
-            itensTexto =
-                pedido.itens || "";
-
-        }
-
-
-        let dataFormatada = "";
-
-        if (pedido.criado_em) {
-
-            dataFormatada =
-                new Date(
-                    pedido.criado_em
-                ).toLocaleString(
-                    "pt-BR"
-                );
-
-        }
-
-
-        const status =
-            pedido.status || "Pendente";
-
-
-        const linha =
-            document.createElement("tr");
-
-
-        linha.innerHTML = `
-
-            <td>
-                ${pedido.id}
-            </td>
-
-            <td>
-                <strong>
-                    ${pedido.nome || ""}
-                </strong>
-            </td>
-
-            <td>
-                ${pedido.turma || ""}
-            </td>
-
-            <td>
-                ${itensTexto}
-            </td>
-
-            <td>
-                <strong>
-                    R$ ${Number(pedido.total || 0)
-                        .toFixed(2)
-                        .replace(".", ",")}
-                </strong>
-            </td>
-
-            <td>
-                ${pedido.pagamento || "Aguardando pagamento"}
-            </td>
-
-            <td>
-
-                <select
-                    class="status-select"
-                    onchange="alterarStatus(${pedido.id}, this.value)"
-                >
-
-                    <option value="Pendente"
-                        ${status === "Pendente" ? "selected" : ""}>
-                        Pendente
-                    </option>
-
-                    <option value="Pago"
-                        ${status === "Pago" ? "selected" : ""}>
-                        Pago
-                    </option>
-
-                    <option value="Cancelado"
-                        ${status === "Cancelado" ? "selected" : ""}>
-                        Cancelado
-                    </option>
-
-                </select>
-
-            </td>
-
-            <td>
-                ${dataFormatada}
-            </td>
-
-        `;
-
-
-        lista.appendChild(linha);
-
-    });
 
 }
 
@@ -407,35 +525,54 @@ async function carregarPedidos() {
 // ALTERAR STATUS
 // ==========================================
 
-async function alterarStatus(id, novoStatus) {
+async function alterarStatus(
+    id,
+    novoStatus
+) {
 
-    const { error } =
-        await supabaseClient
-            .from("pedidos")
-            .update({
-                status: novoStatus
-            })
-            .eq("id", id);
+    try {
+
+        const { error } =
+            await supabaseClient
+                .from("pedidos")
+                .update({
+                    status: novoStatus
+                })
+                .eq("id", id);
 
 
-    if (error) {
+        if (error) {
 
-        console.error(error);
+            throw error;
+
+        }
+
+
+        mostrarMensagem(
+            "✅ Status atualizado com sucesso!",
+            "sucesso"
+        );
+
+
+        // Atualiza a tabela
+        await carregarPedidos();
+
+
+    } catch (erro) {
+
+        console.error(
+            "Erro ao alterar status:",
+            erro
+        );
+
 
         mostrarMensagem(
             "❌ Não foi possível alterar o status: " +
-            error.message,
+            (erro.message || "Erro desconhecido"),
             "erro"
         );
 
-        return;
     }
-
-
-    mostrarMensagem(
-        "✅ Status atualizado com sucesso!",
-        "sucesso"
-    );
 
 }
 
@@ -466,11 +603,6 @@ document.addEventListener(
 );
 
 </script>
-
-
-<!-- SUPABASE -->
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 </body>
 
