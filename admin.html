@@ -37,6 +37,12 @@
             gap: 10px;
         }
 
+        .botoes {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
         button {
             border: none;
             border-radius: 8px;
@@ -45,8 +51,17 @@
             font-weight: bold;
         }
 
+        button:hover {
+            opacity: 0.9;
+        }
+
         .atualizar {
             background: #1769c2;
+            color: white;
+        }
+
+        .limpar {
+            background: #8b0000;
             color: white;
         }
 
@@ -192,6 +207,14 @@
                 grid-template-columns: 1fr;
             }
 
+            .botoes {
+                width: 100%;
+            }
+
+            .botoes button {
+                flex: 1;
+            }
+
         }
 
     </style>
@@ -208,12 +231,18 @@
 
         <strong>📋 Pedidos da Cantina</strong>
 
-        <div>
+        <div class="botoes">
 
             <button
                 class="atualizar"
                 onclick="carregarPedidos()">
                 🔄 Atualizar
+            </button>
+
+            <button
+                class="limpar"
+                onclick="limparPedidos()">
+                🗑️ Limpar pedidos
             </button>
 
             <button
@@ -371,6 +400,8 @@ function mostrarMensagem(texto, tipo) {
     mensagem.className =
         "mensagem " + tipo;
 
+    mensagem.style.display = "block";
+
 }
 
 
@@ -461,7 +492,9 @@ async function carregarPedidos() {
             pagos++;
 
             totalArrecadado +=
-                Number(pedido.total || 0);
+                Number(
+                    pedido.total || 0
+                );
 
         }
 
@@ -527,9 +560,9 @@ async function carregarPedidos() {
 
     pedidos.forEach(pedido => {
 
-        // ------------------------------
+        // ======================================
         // ITENS
-        // ------------------------------
+        // ======================================
 
         let itensTexto = "";
 
@@ -551,9 +584,9 @@ async function carregarPedidos() {
         }
 
 
-        // ------------------------------
+        // ======================================
         // DATA
-        // ------------------------------
+        // ======================================
 
         let dataFormatada = "";
 
@@ -570,9 +603,9 @@ async function carregarPedidos() {
         }
 
 
-        // ------------------------------
+        // ======================================
         // STATUS
-        // ------------------------------
+        // ======================================
 
         const status =
             pedido.status || "Pendente";
@@ -598,9 +631,9 @@ async function carregarPedidos() {
         }
 
 
-        // ------------------------------
+        // ======================================
         // PAGAMENTO
-        // ------------------------------
+        // ======================================
 
         let pagamentoTexto = "";
 
@@ -639,9 +672,9 @@ async function carregarPedidos() {
         }
 
 
-        // ------------------------------
+        // ======================================
         // CRIAR LINHA
-        // ------------------------------
+        // ======================================
 
         const linha =
             document.createElement("tr");
@@ -653,25 +686,19 @@ async function carregarPedidos() {
                 ${pedido.id}
             </td>
 
-
             <td>
-
                 <strong>
                     ${pedido.nome || ""}
                 </strong>
-
             </td>
-
 
             <td>
                 ${pedido.turma || ""}
             </td>
 
-
             <td>
                 ${itensTexto}
             </td>
-
 
             <td>
 
@@ -688,19 +715,20 @@ async function carregarPedidos() {
 
             </td>
 
-
             <td class="${classePagamento}">
 
                 ${pagamentoTexto}
 
             </td>
 
-
             <td>
 
                 <select
                     class="status-select ${classeStatus}"
-                    onchange="alterarStatus(${pedido.id}, this.value)"
+                    onchange="alterarStatus(
+                        ${pedido.id},
+                        this.value
+                    )"
                 >
 
                     <option
@@ -713,7 +741,6 @@ async function carregarPedidos() {
 
                     </option>
 
-
                     <option
                         value="Pago"
                         ${status === "Pago"
@@ -723,7 +750,6 @@ async function carregarPedidos() {
                         Pago
 
                     </option>
-
 
                     <option
                         value="Cancelado"
@@ -738,7 +764,6 @@ async function carregarPedidos() {
                 </select>
 
             </td>
-
 
             <td>
                 ${dataFormatada}
@@ -794,7 +819,87 @@ async function alterarStatus(
     );
 
 
-    // Atualiza tabela e resumo
+    // Atualizar tabela e resumo
+
+    await carregarPedidos();
+
+}
+
+
+// ==========================================
+// LIMPAR TODOS OS PEDIDOS
+// ==========================================
+
+async function limparPedidos() {
+
+    const confirmar =
+        confirm(
+            "⚠️ ATENÇÃO!\n\n" +
+            "Você está prestes a apagar TODOS os pedidos.\n\n" +
+            "Essa ação não poderá ser desfeita.\n\n" +
+            "Deseja realmente continuar?"
+        );
+
+
+    if (!confirmar) {
+
+        return;
+
+    }
+
+
+    const confirmarNovamente =
+        confirm(
+            "🚨 CONFIRMAÇÃO FINAL 🚨\n\n" +
+            "Tem certeza que deseja apagar TODOS os pedidos?"
+        );
+
+
+    if (!confirmarNovamente) {
+
+        return;
+
+    }
+
+
+    mostrarMensagem(
+        "⏳ Apagando pedidos...",
+        "sucesso"
+    );
+
+
+    const { error } =
+        await supabaseClient
+            .from("pedidos")
+            .delete()
+            .not("id", "is", null);
+
+
+    if (error) {
+
+        console.error(
+            "ERRO AO LIMPAR PEDIDOS:",
+            error
+        );
+
+
+        mostrarMensagem(
+            "❌ Não foi possível limpar os pedidos: " +
+            error.message,
+            "erro"
+        );
+
+
+        return;
+
+    }
+
+
+    mostrarMensagem(
+        "✅ Todos os pedidos foram apagados!",
+        "sucesso"
+    );
+
 
     await carregarPedidos();
 
