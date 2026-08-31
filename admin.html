@@ -5,56 +5,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Painel do Administrador - Cantina</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>Painel do Administrador - Cantina Inovare</title>
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
-
         body {
-            margin: 0;
             font-family: Arial, sans-serif;
-            background: #f3f7fc;
-            color: #222;
-        }
-
-        header {
-            background: #1769c2;
-            color: white;
-            padding: 25px;
-            text-align: center;
-        }
-
-        header h1 {
-            margin: 0 0 8px;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 20px;
         }
 
         .container {
-            width: 95%;
             max-width: 1200px;
-            margin: 30px auto;
+            margin: auto;
+        }
+
+        h1 {
+            color: #1769c2;
+            text-align: center;
         }
 
         .topo {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        }
-
-        .topo h2 {
-            margin-top: 0;
-            color: #1769c2;
+            gap: 10px;
         }
 
         button {
             border: none;
             border-radius: 8px;
-            padding: 11px 18px;
+            padding: 10px 16px;
             cursor: pointer;
             font-weight: bold;
         }
@@ -67,32 +49,50 @@
         .sair {
             background: #e53935;
             color: white;
-            margin-left: 10px;
+        }
+
+        .mensagem {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .erro {
+            display: block;
+            background: #ffdede;
+            color: #b00000;
+        }
+
+        .sucesso {
+            display: block;
+            background: #d9f8df;
+            color: #08751d;
         }
 
         .tabela-container {
             background: white;
             border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            padding: 15px;
             overflow-x: auto;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 850px;
+            min-width: 900px;
         }
 
         th {
             background: #1769c2;
             color: white;
-            padding: 13px;
+            padding: 12px;
             text-align: left;
         }
 
         td {
-            padding: 13px;
+            padding: 12px;
             border-bottom: 1px solid #ddd;
         }
 
@@ -101,400 +101,376 @@
         }
 
         .pendente {
-            color: #c77700;
+            color: #d97706;
             font-weight: bold;
         }
 
         .pago {
-            color: #16833b;
+            color: #16803c;
             font-weight: bold;
         }
 
-        .erro {
-            background: #ffdede;
-            color: #b00000;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
+        .cancelado {
+            color: #d00000;
+            font-weight: bold;
         }
 
-        .vazio {
+        .status-select {
+            padding: 7px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        .sem-pedidos {
             text-align: center;
             padding: 30px;
             color: #666;
-        }
-
-        .carregando {
-            text-align: center;
-            padding: 30px;
-        }
-
-        .total-geral {
-            margin-top: 20px;
-            font-size: 20px;
-            font-weight: bold;
-            color: #1769c2;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                width: 92%;
-            }
-
-            header h1 {
-                font-size: 23px;
-            }
         }
     </style>
 </head>
 
 <body>
 
-    <header>
-        <h1>🔐 Painel do Administrador</h1>
-        <p>Pedidos da Cantina Colégio Inovare</p>
-    </header>
+<div class="container">
 
-    <div class="container">
+    <h1>🔐 Painel do Administrador</h1>
 
-        <div class="topo">
+    <div class="topo">
 
-            <h2>📋 Pedidos recebidos</h2>
+        <strong>📋 Pedidos da Cantina</strong>
 
+        <div>
             <button class="atualizar" onclick="carregarPedidos()">
-                🔄 Atualizar pedidos
+                🔄 Atualizar
             </button>
 
             <button class="sair" onclick="sair()">
-                🚪 Voltar
+                🚪 Sair
             </button>
-
-            <div id="mensagem"></div>
-
-        </div>
-
-
-        <div class="tabela-container">
-
-            <div id="carregando" class="carregando">
-                ⏳ Carregando pedidos...
-            </div>
-
-            <table id="tabela" style="display: none;">
-
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Aluno</th>
-                        <th>Turma</th>
-                        <th>Pedido</th>
-                        <th>Total</th>
-                        <th>Pagamento</th>
-                        <th>Status</th>
-                        <th>Data</th>
-                    </tr>
-                </thead>
-
-                <tbody id="listaPedidos"></tbody>
-
-            </table>
-
-            <div id="vazio" class="vazio" style="display: none;">
-                Nenhum pedido encontrado.
-            </div>
-
-            <div id="totalGeral" class="total-geral"></div>
-
         </div>
 
     </div>
 
+    <div id="mensagem" class="mensagem"></div>
 
-    <script>
+    <div class="tabela-container">
 
-        // ==========================================
-        // CONFIGURAÇÃO DO SUPABASE
-        // ==========================================
+        <table>
 
-        const SUPABASE_URL =
-            "https://duvwemmqgdwlastmfegh.supabase.co";
+            <thead>
 
-        const SUPABASE_KEY =
-            "sb_publishable_vlsLJ9-0Jrij35lSz3cigQ_entN7J8c";
+                <tr>
+                    <th>ID</th>
+                    <th>Aluno</th>
+                    <th>Turma</th>
+                    <th>Itens</th>
+                    <th>Total</th>
+                    <th>Pagamento</th>
+                    <th>Status</th>
+                    <th>Data</th>
+                </tr>
 
-        const supabaseClient =
-            window.supabase.createClient(
-                SUPABASE_URL,
-                SUPABASE_KEY
-            );
+            </thead>
 
+            <tbody id="listaPedidos">
 
-        // ==========================================
-        // CARREGAR PEDIDOS
-        // ==========================================
+                <tr>
+                    <td colspan="8" class="sem-pedidos">
+                        ⏳ Carregando pedidos...
+                    </td>
+                </tr>
 
-        async function carregarPedidos() {
+            </tbody>
 
-            const carregando =
-                document.getElementById("carregando");
+        </table>
 
-            const tabela =
-                document.getElementById("tabela");
+    </div>
 
-            const vazio =
-                document.getElementById("vazio");
+</div>
 
-            const lista =
-                document.getElementById("listaPedidos");
 
-            const totalGeral =
-                document.getElementById("totalGeral");
+<script>
 
-            const mensagem =
-                document.getElementById("mensagem");
+const SUPABASE_URL =
+    "https://duvwemmqgdwlastmfegh.supabase.co";
 
+const SUPABASE_KEY =
+    "sb_publishable_vlsLJ9-0Jrij35lSz3cigQ_entN7J8c";
 
-            carregando.style.display = "block";
-            tabela.style.display = "none";
-            vazio.style.display = "none";
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
 
-            lista.innerHTML = "";
-            totalGeral.textContent = "";
-            mensagem.innerHTML = "";
 
+// ==========================================
+// MOSTRAR MENSAGEM
+// ==========================================
 
-            try {
+function mostrarMensagem(texto, tipo) {
 
-                const resposta =
-                    await supabaseClient
-                        .from("pedidos")
-                        .select("*")
-                        .order("criado_em", {
-                            ascending: false
-                        });
+    const mensagem =
+        document.getElementById("mensagem");
 
+    mensagem.textContent = texto;
 
-                console.log(
-                    "Pedidos recebidos:",
-                    resposta.data
-                );
+    mensagem.className =
+        "mensagem " + tipo;
 
-                console.log(
-                    "Erro:",
-                    resposta.error
-                );
+}
 
 
-                if (resposta.error) {
-                    throw resposta.error;
-                }
+// ==========================================
+// CARREGAR PEDIDOS
+// ==========================================
 
+async function carregarPedidos() {
 
-                const pedidos =
-                    resposta.data || [];
+    const lista =
+        document.getElementById("listaPedidos");
 
+    lista.innerHTML = `
+        <tr>
+            <td colspan="8" class="sem-pedidos">
+                ⏳ Carregando pedidos...
+            </td>
+        </tr>
+    `;
 
-                carregando.style.display = "none";
 
+    const { data, error } =
+        await supabaseClient
+            .from("pedidos")
+            .select("*")
+            .order("criado_em", {
+                ascending: false
+            });
 
-                if (pedidos.length === 0) {
 
-                    vazio.style.display = "block";
+    if (error) {
 
-                    return;
-                }
+        console.error(error);
 
-
-                let somaTotal = 0;
-
-
-                pedidos.forEach(function (pedido) {
-
-                    somaTotal +=
-                        Number(pedido.total) || 0;
-
-
-                    // ------------------------------
-                    // PRODUTOS
-                    // ------------------------------
-
-                    let textoItens = "";
-
-
-                    if (
-                        Array.isArray(pedido.itens)
-                    ) {
-
-                        textoItens =
-                            pedido.itens
-                                .map(function (item) {
-
-                                    return (
-                                        item.produto +
-                                        " × " +
-                                        item.quantidade
-                                    );
-
-                                })
-                                .join("<br>");
-
-                    } else {
-
-                        textoItens = "-";
-
-                    }
-
-
-                    // ------------------------------
-                    // STATUS
-                    // ------------------------------
-
-                    const status =
-                        pedido.status ||
-                        "Pendente";
-
-
-                    const classeStatus =
-                        status.toLowerCase()
-                            .includes("pago")
-                            ? "pago"
-                            : "pendente";
-
-
-                    // ------------------------------
-                    // DATA
-                    // ------------------------------
-
-                    let dataTexto = "-";
-
-
-                    if (pedido.criado_em) {
-
-                        const data =
-                            new Date(
-                                pedido.criado_em
-                            );
-
-                        dataTexto =
-                            data.toLocaleString(
-                                "pt-BR"
-                            );
-                    }
-
-
-                    // ------------------------------
-                    // LINHA
-                    // ------------------------------
-
-                    const linha =
-                        document.createElement("tr");
-
-
-                    linha.innerHTML = `
-
-                        <td>${pedido.id}</td>
-
-                        <td>
-                            <strong>
-                                ${pedido.nome || "-"}
-                            </strong>
-                        </td>
-
-                        <td>
-                            ${pedido.turma || "-"}
-                        </td>
-
-                        <td>
-                            ${textoItens}
-                        </td>
-
-                        <td>
-                            <strong>
-                                R$ ${Number(pedido.total)
-                                    .toFixed(2)
-                                    .replace(".", ",")}
-                            </strong>
-                        </td>
-
-                        <td>
-                            ${pedido.pagamento || "-"}
-                        </td>
-
-                        <td class="${classeStatus}">
-                            ${status}
-                        </td>
-
-                        <td>
-                            ${dataTexto}
-                        </td>
-
-                    `;
-
-
-                    lista.appendChild(linha);
-
-                });
-
-
-                tabela.style.display = "table";
-
-
-                totalGeral.textContent =
-                    "💰 Total dos pedidos: R$ " +
-                    somaTotal
-                        .toFixed(2)
-                        .replace(".", ",");
-
-
-            } catch (erro) {
-
-                console.error(
-                    "Erro ao carregar pedidos:",
-                    erro
-                );
-
-
-                carregando.style.display = "none";
-
-
-                mensagem.innerHTML =
-                    `<div class="erro">
-                        ❌ Não foi possível carregar os pedidos.
-                        <br><br>
-                        ${erro.message || ""}
-                    </div>`;
-
-            }
-
-        }
-
-
-        // ==========================================
-        // VOLTAR
-        // ==========================================
-
-        function sair() {
-
-            window.location.href =
-                "index.html";
-
-        }
-
-
-        // ==========================================
-        // INICIAR
-        // ==========================================
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            function () {
-
-                carregarPedidos();
-
-            }
+        mostrarMensagem(
+            "❌ Erro ao carregar pedidos: " +
+            error.message,
+            "erro"
         );
 
-    </script>
+        lista.innerHTML = `
+            <tr>
+                <td colspan="8" class="sem-pedidos">
+                    ❌ Não foi possível carregar os pedidos.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    if (!data || data.length === 0) {
+
+        lista.innerHTML = `
+            <tr>
+                <td colspan="8" class="sem-pedidos">
+                    📭 Nenhum pedido encontrado.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    lista.innerHTML = "";
+
+
+    data.forEach(pedido => {
+
+        let itensTexto = "";
+
+
+        if (Array.isArray(pedido.itens)) {
+
+            itensTexto =
+                pedido.itens
+                    .map(item =>
+                        `${item.quantidade}x ${item.produto}`
+                    )
+                    .join(", ");
+
+        } else {
+
+            itensTexto =
+                pedido.itens || "";
+
+        }
+
+
+        let dataFormatada = "";
+
+        if (pedido.criado_em) {
+
+            dataFormatada =
+                new Date(
+                    pedido.criado_em
+                ).toLocaleString(
+                    "pt-BR"
+                );
+
+        }
+
+
+        const status =
+            pedido.status || "Pendente";
+
+
+        const linha =
+            document.createElement("tr");
+
+
+        linha.innerHTML = `
+
+            <td>
+                ${pedido.id}
+            </td>
+
+            <td>
+                <strong>
+                    ${pedido.nome || ""}
+                </strong>
+            </td>
+
+            <td>
+                ${pedido.turma || ""}
+            </td>
+
+            <td>
+                ${itensTexto}
+            </td>
+
+            <td>
+                <strong>
+                    R$ ${Number(pedido.total || 0)
+                        .toFixed(2)
+                        .replace(".", ",")}
+                </strong>
+            </td>
+
+            <td>
+                ${pedido.pagamento || "Aguardando pagamento"}
+            </td>
+
+            <td>
+
+                <select
+                    class="status-select"
+                    onchange="alterarStatus(${pedido.id}, this.value)"
+                >
+
+                    <option value="Pendente"
+                        ${status === "Pendente" ? "selected" : ""}>
+                        Pendente
+                    </option>
+
+                    <option value="Pago"
+                        ${status === "Pago" ? "selected" : ""}>
+                        Pago
+                    </option>
+
+                    <option value="Cancelado"
+                        ${status === "Cancelado" ? "selected" : ""}>
+                        Cancelado
+                    </option>
+
+                </select>
+
+            </td>
+
+            <td>
+                ${dataFormatada}
+            </td>
+
+        `;
+
+
+        lista.appendChild(linha);
+
+    });
+
+}
+
+
+// ==========================================
+// ALTERAR STATUS
+// ==========================================
+
+async function alterarStatus(id, novoStatus) {
+
+    const { error } =
+        await supabaseClient
+            .from("pedidos")
+            .update({
+                status: novoStatus
+            })
+            .eq("id", id);
+
+
+    if (error) {
+
+        console.error(error);
+
+        mostrarMensagem(
+            "❌ Não foi possível alterar o status: " +
+            error.message,
+            "erro"
+        );
+
+        return;
+    }
+
+
+    mostrarMensagem(
+        "✅ Status atualizado com sucesso!",
+        "sucesso"
+    );
+
+}
+
+
+// ==========================================
+// SAIR
+// ==========================================
+
+function sair() {
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+// ==========================================
+// INICIAR
+// ==========================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        carregarPedidos();
+
+    }
+);
+
+</script>
+
+
+<!-- SUPABASE -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 </body>
 
