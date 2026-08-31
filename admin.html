@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Painel do Administrador - Cantina</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f7fc;
+            color: #222;
+        }
+
+        header {
+            background: #1769c2;
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        .topo {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .topo h2 {
+            margin-top: 0;
+            color: #1769c2;
+        }
+
+        button {
+            border: none;
+            border-radius: 8px;
+            padding: 11px 18px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .atualizar {
+            background: #1769c2;
+            color: white;
+        }
+
+        .sair {
+            background: #e53935;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .tabela-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th {
+            background: #1769c2;
+            color: white;
+            padding: 13px;
+            text-align: left;
+        }
+
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f5f9ff;
+        }
+
+        .pendente {
+            color: #c77700;
+            font-weight: bold;
+        }
+
+        .pago {
+            color: #16833b;
+            font-weight: bold;
+        }
+
+        .erro {
+            background: #ffdede;
+            color: #b00000;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .vazio {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+        }
+
+        .carregando {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .total-geral {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #1769c2;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                width: 92%;
+            }
+
+            header h1 {
+                font-size: 23px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>🔐 Painel do Administrador</h1>
+        <p>Pedidos da Cantina Colégio Inovare</p>
+    </header>
+
+    <div class="container">
+
+        <div class="topo">
+
+            <h2>📋 Pedidos recebidos</h2>
+
+            <button class="atualizar" onclick="carregarPedidos()">
+                🔄 Atualizar pedidos
+            </button>
+
+            <button class="sair" onclick="sair()">
+                🚪 Voltar
+            </button>
+
+            <div id="mensagem"></div>
+
+        </div>
+
+
+        <div class="tabela-container">
+
+            <div id="carregando" class="carregando">
+                ⏳ Carregando pedidos...
+            </div>
+
+            <table id="tabela" style="display: none;">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Aluno</th>
+                        <th>Turma</th>
+                        <th>Pedido</th>
+                        <th>Total</th>
+                        <th>Pagamento</th>
+                        <th>Status</th>
+                        <th>Data</th>
+                    </tr>
+                </thead>
+
+                <tbody id="listaPedidos"></tbody>
+
+            </table>
+
+            <div id="vazio" class="vazio" style="display: none;">
+                Nenhum pedido encontrado.
+            </div>
+
+            <div id="totalGeral" class="total-geral"></div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // ==========================================
+        // CONFIGURAÇÃO DO SUPABASE
+        // ==========================================
+
+        const SUPABASE_URL =
+            "https://duvwemmqgdwlastmfegh.supabase.co";
+
+        const SUPABASE_KEY =
+            "sb_publishable_vlsLJ9-0Jrij35lSz3cigQ_entN7J8c";
+
+        const supabaseClient =
+            window.supabase.createClient(
+                SUPABASE_URL,
+                SUPABASE_KEY
+            );
+
+
+        // ==========================================
+        // CARREGAR PEDIDOS
+        // ==========================================
+
+        async function carregarPedidos() {
+
+            const carregando =
+                document.getElementById("carregando");
+
+            const tabela =
+                document.getElementById("tabela");
+
+            const vazio =
+                document.getElementById("vazio");
+
+            const lista =
+                document.getElementById("listaPedidos");
+
+            const totalGeral =
+                document.getElementById("totalGeral");
+
+            const mensagem =
+                document.getElementById("mensagem");
+
+
+            carregando.style.display = "block";
+            tabela.style.display = "none";
+            vazio.style.display = "none";
+
+            lista.innerHTML = "";
+            totalGeral.textContent = "";
+            mensagem.innerHTML = "";
+
+
+            try {
+
+                const resposta =
+                    await supabaseClient
+                        .from("pedidos")
+                        .select("*")
+                        .order("criado_em", {
+                            ascending: false
+                        });
+
+
+                console.log(
+                    "Pedidos recebidos:",
+                    resposta.data
+                );
+
+                console.log(
+                    "Erro:",
+                    resposta.error
+                );
+
+
+                if (resposta.error) {
+                    throw resposta.error;
+                }
+
+
+                const pedidos =
+                    resposta.data || [];
+
+
+                carregando.style.display = "none";
+
+
+                if (pedidos.length === 0) {
+
+                    vazio.style.display = "block";
+
+                    return;
+                }
+
+
+                let somaTotal = 0;
+
+
+                pedidos.forEach(function (pedido) {
+
+                    somaTotal +=
+                        Number(pedido.total) || 0;
+
+
+                    // ------------------------------
+                    // PRODUTOS
+                    // ------------------------------
+
+                    let textoItens = "";
+
+
+                    if (
+                        Array.isArray(pedido.itens)
+                    ) {
+
+                        textoItens =
+                            pedido.itens
+                                .map(function (item) {
+
+                                    return (
+                                        item.produto +
+                                        " × " +
+                                        item.quantidade
+                                    );
+
+                                })
+                                .join("<br>");
+
+                    } else {
+
+                        textoItens = "-";
+
+                    }
+
+
+                    // ------------------------------
+                    // STATUS
+                    // ------------------------------
+
+                    const status =
+                        pedido.status ||
+                        "Pendente";
+
+
+                    const classeStatus =
+                        status.toLowerCase()
+                            .includes("pago")
+                            ? "pago"
+                            : "pendente";
+
+
+                    // ------------------------------
+                    // DATA
+                    // ------------------------------
+
+                    let dataTexto = "-";
+
+
+                    if (pedido.criado_em) {
+
+                        const data =
+                            new Date(
+                                pedido.criado_em
+                            );
+
+                        dataTexto =
+                            data.toLocaleString(
+                                "pt-BR"
+                            );
+                    }
+
+
+                    // ------------------------------
+                    // LINHA
+                    // ------------------------------
+
+                    const linha =
+                        document.createElement("tr");
+
+
+                    linha.innerHTML = `
+
+                        <td>${pedido.id}</td>
+
+                        <td>
+                            <strong>
+                                ${pedido.nome || "-"}
+                            </strong>
+                        </td>
+
+                        <td>
+                            ${pedido.turma || "-"}
+                        </td>
+
+                        <td>
+                            ${textoItens}
+                        </td>
+
+                        <td>
+                            <strong>
+                                R$ ${Number(pedido.total)
+                                    .toFixed(2)
+                                    .replace(".", ",")}
+                            </strong>
+                        </td>
+
+                        <td>
+                            ${pedido.pagamento || "-"}
+                        </td>
+
+                        <td class="${classeStatus}">
+                            ${status}
+                        </td>
+
+                        <td>
+                            ${dataTexto}
+                        </td>
+
+                    `;
+
+
+                    lista.appendChild(linha);
+
+                });
+
+
+                tabela.style.display = "table";
+
+
+                totalGeral.textContent =
+                    "💰 Total dos pedidos: R$ " +
+                    somaTotal
+                        .toFixed(2)
+                        .replace(".", ",");
+
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro ao carregar pedidos:",
+                    erro
+                );
+
+
+                carregando.style.display = "none";
+
+
+                mensagem.innerHTML =
+                    `<div class="erro">
+                        ❌ Não foi possível carregar os pedidos.
+                        <br><br>
+                        ${erro.message || ""}
+                    </div>`;
+
+            }
+
+        }
+
+
+        // ==========================================
+        // VOLTAR
+        // ==========================================
+
+        function sair() {
+
+            window.location.href =
+                "index.html";
+
+        }
+
+
+        // ==========================================
+        // INICIAR
+        // ==========================================
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                carregarPedidos();
+
+            }
+        );
+
+    </script>
+
+</body>
+
+</html>
