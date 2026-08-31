@@ -2,15 +2,12 @@
 <html lang="pt-BR">
 
 <head>
-
     <meta charset="UTF-8">
-
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Painel do Administrador - Cantina Inovare</title>
 
-    <!-- SUPABASE CARREGADO ANTES DO NOSSO JAVASCRIPT -->
+    <!-- SUPABASE -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
@@ -38,7 +35,6 @@
             align-items: center;
             margin-bottom: 20px;
             gap: 10px;
-            flex-wrap: wrap;
         }
 
         button {
@@ -78,6 +74,32 @@
             color: #08751d;
         }
 
+        .resumo {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+        }
+
+        .card span {
+            display: block;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .card strong {
+            font-size: 25px;
+            color: #1769c2;
+        }
+
         .tabela-container {
             background: white;
             border-radius: 12px;
@@ -112,7 +134,6 @@
             padding: 7px;
             border-radius: 6px;
             border: 1px solid #ccc;
-            font-weight: bold;
         }
 
         .sem-pedidos {
@@ -121,45 +142,20 @@
             color: #666;
         }
 
-        .resumo {
-            display: grid;
-            grid-template-columns:
-                repeat(4, 1fr);
-
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
-        }
-
-        .card-titulo {
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        .card-valor {
-            font-size: 25px;
-            font-weight: bold;
-            color: #1769c2;
-        }
-
-        @media (max-width: 700px) {
+        @media (max-width: 800px) {
 
             .resumo {
-                grid-template-columns:
-                    repeat(2, 1fr);
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .topo {
+                flex-direction: column;
+                align-items: flex-start;
             }
 
         }
 
     </style>
-
 </head>
 
 <body>
@@ -170,31 +166,28 @@
 
     <div class="topo">
 
-        <strong>
-            📋 Pedidos da Cantina
-        </strong>
+        <strong>📋 Pedidos da Cantina</strong>
 
         <div>
 
             <button
                 class="atualizar"
                 onclick="carregarPedidos()">
-
                 🔄 Atualizar
-
             </button>
 
             <button
                 class="sair"
                 onclick="sair()">
-
                 🚪 Sair
-
             </button>
 
         </div>
 
     </div>
+
+
+    <div id="mensagem" class="mensagem"></div>
 
 
     <!-- RESUMO -->
@@ -202,80 +195,33 @@
     <div class="resumo">
 
         <div class="card">
-
-            <div class="card-titulo">
-                Pedidos
-            </div>
-
-            <div
-                class="card-valor"
-                id="totalPedidos">
-
-                0
-
-            </div>
-
+            <span>Pedidos</span>
+            <strong id="totalPedidos">0</strong>
         </div>
 
-
         <div class="card">
-
-            <div class="card-titulo">
-                Total arrecadado
-            </div>
-
-            <div
-                class="card-valor"
-                id="totalArrecadado">
-
+            <span>Total arrecadado</span>
+            <strong id="totalArrecadado">
                 R$ 0,00
-
-            </div>
-
+            </strong>
         </div>
 
-
         <div class="card">
-
-            <div class="card-titulo">
-                Pendentes
-            </div>
-
-            <div
-                class="card-valor"
-                id="totalPendentes">
-
-                0
-
-            </div>
-
+            <span>Pendentes</span>
+            <strong id="totalPendentes">0</strong>
         </div>
 
-
         <div class="card">
-
-            <div class="card-titulo">
-                Pagos
-            </div>
-
-            <div
-                class="card-valor"
-                id="totalPagos">
-
-                0
-
-            </div>
-
+            <span>Pagos</span>
+            <strong id="totalPagos">0</strong>
         </div>
 
     </div>
 
 
-    <div
-        id="mensagem"
-        class="mensagem">
-    </div>
+    <!-- PEDIDOS -->
 
+    <h2>Pedidos recebidos</h2>
 
     <div class="tabela-container">
 
@@ -284,27 +230,17 @@
             <thead>
 
                 <tr>
-
                     <th>ID</th>
-
                     <th>Aluno</th>
-
                     <th>Turma</th>
-
                     <th>Itens</th>
-
                     <th>Total</th>
-
                     <th>Pagamento</th>
-
                     <th>Status</th>
-
                     <th>Data</th>
-
                 </tr>
 
             </thead>
-
 
             <tbody id="listaPedidos">
 
@@ -331,9 +267,8 @@
 
 <script>
 
-
 // ==========================================
-// CONFIGURAÇÃO DO SUPABASE
+// CONFIGURAÇÃO SUPABASE
 // ==========================================
 
 const SUPABASE_URL =
@@ -341,7 +276,6 @@ const SUPABASE_URL =
 
 const SUPABASE_KEY =
     "sb_publishable_vlsLJ9-0Jrij35lSz3cigQ_entN7J8c";
-
 
 const supabaseClient =
     window.supabase.createClient(
@@ -351,7 +285,7 @@ const supabaseClient =
 
 
 // ==========================================
-// MOSTRAR MENSAGEM
+// MENSAGEM
 // ==========================================
 
 function mostrarMensagem(texto, tipo) {
@@ -374,51 +308,32 @@ function mostrarMensagem(texto, tipo) {
 async function carregarPedidos() {
 
     const lista =
-        document.getElementById(
-            "listaPedidos"
-        );
-
+        document.getElementById("listaPedidos");
 
     lista.innerHTML = `
         <tr>
-            <td colspan="8"
-                class="sem-pedidos">
+            <td colspan="8" class="sem-pedidos">
                 ⏳ Carregando pedidos...
             </td>
         </tr>
     `;
 
 
-    const resultado =
+    const { data, error } =
         await supabaseClient
             .from("pedidos")
             .select("*")
-            .order(
-                "criado_em",
-                {
-                    ascending: false
-                }
-            );
+            .order("criado_em", {
+                ascending: false
+            });
 
-
-    const data =
-        resultado.data;
-
-    const error =
-        resultado.error;
-
-
-    // ==========================================
-    // ERRO
-    // ==========================================
 
     if (error) {
 
         console.error(
-            "Erro Supabase:",
+            "ERRO SUPABASE:",
             error
         );
-
 
         mostrarMensagem(
             "❌ Erro ao carregar pedidos: " +
@@ -426,17 +341,13 @@ async function carregarPedidos() {
             "erro"
         );
 
-
         lista.innerHTML = `
             <tr>
-                <td colspan="8"
-                    class="sem-pedidos">
-                    ❌ Não foi possível carregar
-                    os pedidos.
+                <td colspan="8" class="sem-pedidos">
+                    ❌ Não foi possível carregar os pedidos.
                 </td>
             </tr>
         `;
-
 
         return;
     }
@@ -446,61 +357,44 @@ async function carregarPedidos() {
     // ATUALIZAR RESUMO
     // ==========================================
 
-    const totalPedidos =
-        data ? data.length : 0;
-
-
-    let totalArrecadado = 0;
-
-    let totalPendentes = 0;
-
-    let totalPagos = 0;
-
-
-    if (data) {
-
-        data.forEach(pedido => {
-
-            const total =
-                Number(
-                    pedido.total || 0
-                );
-
-
-            totalArrecadado += total;
-
-
-            const status =
-                pedido.status ||
-                "Pendente";
-
-
-            if (
-                status === "Pendente"
-            ) {
-
-                totalPendentes++;
-
-            }
-
-
-            if (
-                status === "Pago"
-            ) {
-
-                totalPagos++;
-
-            }
-
-        });
-
-    }
+    const pedidos =
+        data || [];
 
 
     document.getElementById(
         "totalPedidos"
     ).textContent =
-        totalPedidos;
+        pedidos.length;
+
+
+    let totalArrecadado = 0;
+    let pendentes = 0;
+    let pagos = 0;
+
+
+    pedidos.forEach(pedido => {
+
+        const status =
+            pedido.status || "Pendente";
+
+
+        if (status === "Pago") {
+
+            pagos++;
+
+            totalArrecadado +=
+                Number(pedido.total || 0);
+
+        }
+
+
+        if (status === "Pendente") {
+
+            pendentes++;
+
+        }
+
+    });
 
 
     document.getElementById(
@@ -515,31 +409,25 @@ async function carregarPedidos() {
     document.getElementById(
         "totalPendentes"
     ).textContent =
-        totalPendentes;
+        pendentes;
 
 
     document.getElementById(
         "totalPagos"
     ).textContent =
-        totalPagos;
+        pagos;
 
 
     // ==========================================
     // NENHUM PEDIDO
     // ==========================================
 
-    if (
-        !data ||
-        data.length === 0
-    ) {
+    if (pedidos.length === 0) {
 
         lista.innerHTML = `
             <tr>
-                <td colspan="8"
-                    class="sem-pedidos">
-
+                <td colspan="8" class="sem-pedidos">
                     📭 Nenhum pedido encontrado.
-
                 </td>
             </tr>
         `;
@@ -549,42 +437,24 @@ async function carregarPedidos() {
 
 
     // ==========================================
-    // LIMPAR LISTA
+    // MOSTRAR PEDIDOS
     // ==========================================
 
     lista.innerHTML = "";
 
 
-    // ==========================================
-    // MOSTRAR PEDIDOS
-    // ==========================================
-
-    data.forEach(pedido => {
+    pedidos.forEach(pedido => {
 
         let itensTexto = "";
 
 
-        // --------------------------------------
-        // ITENS
-        // --------------------------------------
-
-        if (
-            Array.isArray(
-                pedido.itens
-            )
-        ) {
+        if (Array.isArray(pedido.itens)) {
 
             itensTexto =
                 pedido.itens
-                    .map(item => {
-
-                        return (
-                            item.quantidade +
-                            "x " +
-                            item.produto
-                        );
-
-                    })
+                    .map(item =>
+                        `${item.quantidade}x ${item.produto}`
+                    )
                     .join(", ");
 
         } else {
@@ -595,16 +465,10 @@ async function carregarPedidos() {
         }
 
 
-        // --------------------------------------
-        // DATA
-        // --------------------------------------
-
         let dataFormatada = "";
 
 
-        if (
-            pedido.criado_em
-        ) {
+        if (pedido.criado_em) {
 
             dataFormatada =
                 new Date(
@@ -616,23 +480,12 @@ async function carregarPedidos() {
         }
 
 
-        // --------------------------------------
-        // STATUS
-        // --------------------------------------
-
         const status =
-            pedido.status ||
-            "Pendente";
+            pedido.status || "Pendente";
 
-
-        // --------------------------------------
-        // LINHA
-        // --------------------------------------
 
         const linha =
-            document.createElement(
-                "tr"
-            );
+            document.createElement("tr");
 
 
         linha.innerHTML = `
@@ -657,8 +510,7 @@ async function carregarPedidos() {
 
             <td>
                 <strong>
-                    R$
-                    ${Number(
+                    R$ ${Number(
                         pedido.total || 0
                     )
                     .toFixed(2)
@@ -667,10 +519,8 @@ async function carregarPedidos() {
             </td>
 
             <td>
-                ${
-                    pedido.pagamento ||
-                    "Aguardando pagamento"
-                }
+                ${pedido.pagamento ||
+                "Aguardando pagamento"}
             </td>
 
             <td>
@@ -687,42 +537,31 @@ async function carregarPedidos() {
 
                     <option
                         value="Pendente"
-                        ${
-                            status ===
-                            "Pendente"
+                        ${status === "Pendente"
                             ? "selected"
-                            : ""
-                        }>
+                            : ""}>
 
-                        🟠 Pendente
+                        Pendente
 
                     </option>
-
 
                     <option
                         value="Pago"
-                        ${
-                            status ===
-                            "Pago"
+                        ${status === "Pago"
                             ? "selected"
-                            : ""
-                        }>
+                            : ""}>
 
-                        🟢 Pago
+                        Pago
 
                     </option>
 
-
                     <option
                         value="Cancelado"
-                        ${
-                            status ===
-                            "Cancelado"
+                        ${status === "Cancelado"
                             ? "selected"
-                            : ""
-                        }>
+                            : ""}>
 
-                        🔴 Cancelado
+                        Cancelado
 
                     </option>
 
@@ -737,9 +576,7 @@ async function carregarPedidos() {
         `;
 
 
-        lista.appendChild(
-            linha
-        );
+        lista.appendChild(linha);
 
     });
 
@@ -755,36 +592,24 @@ async function alterarStatus(
     novoStatus
 ) {
 
-    const resultado =
+    const { error } =
         await supabaseClient
             .from("pedidos")
             .update({
                 status: novoStatus
             })
-            .eq(
-                "id",
-                id
-            );
-
-
-    const error =
-        resultado.error;
+            .eq("id", id);
 
 
     if (error) {
 
-        console.error(
-            error
-        );
-
+        console.error(error);
 
         mostrarMensagem(
-            "❌ Não foi possível alterar " +
-            "o status: " +
+            "❌ Não foi possível alterar o status: " +
             error.message,
             "erro"
         );
-
 
         return;
     }
@@ -796,7 +621,8 @@ async function alterarStatus(
     );
 
 
-    // Atualiza os números do painel
+    // Recarregar para atualizar os números
+
     carregarPedidos();
 
 }
@@ -826,7 +652,6 @@ document.addEventListener(
 
     }
 );
-
 
 </script>
 
